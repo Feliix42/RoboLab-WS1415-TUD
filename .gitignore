@@ -1,3 +1,8 @@
+Robot-Workspace/RoboLab/implementation.oil
+Robot-Workspace/RoboLab/kernel_cfg.c
+Robot-Workspace/RoboLab/kernel_id.h
+
+*.sh
 *.elf
 *.rxe
 *.bin
