@@ -1,3 +1,5 @@
+Simulation-Workspace/simulation/src/RobolabSimClient
+
 *.elf
 *.rxe
 *.bin

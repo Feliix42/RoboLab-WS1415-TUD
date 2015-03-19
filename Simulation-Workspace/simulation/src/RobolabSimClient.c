@@ -19,8 +19,9 @@ struct node {
 
 
 void initArray(void) {
-  for(int i = 0; i < 13; i++) {
-    for(int j = 0; j < 7; j++) {
+  int i, j;
+  for(i = 0; i < 13; i++) {
+    for(j = 0; j < 7; j++) {
       node[i][j].state = 2;
     }
   }
@@ -110,7 +111,8 @@ int main(void) {
 
     checkIntersection(x, y);
 
-    for(int i = 0; i <= 3; i++) {
+    int i;
+    for(i = 0; i <= 3; i++) {
       if((node[x][y].directions[i]))
         if(checkNodeAvailable(x, y, i))
           driveTo = i;
