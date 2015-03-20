@@ -4,19 +4,34 @@ This repository houses the RoboLab project for the course RoboLab at TU Dresden 
 
 ## Setting up the Workspaces
 
-If you want to use the Source Code provided in this repo on your NXT, follow these Steps:
+If you want to use the Source Code provided in this repo on your NXT, follow these steps:
 
-1. Git-clone the repo
+1. Git-clone the Repo.
 
 2. If you have not already, install the `Eclipse IDE for C/C++` (can be found [here](http://www.eclipse.org)) on your computer along with the additional packages and drivers, provided in this [Dropbox folder](https://www.dropbox.com/sh/1g4fsap2re78npf/AAA6sP436yRCfl63jRXyvyo8a) inside the HowTo-File.
 
 3. Download the Eclipse-Workspace for the Robot from [here](https://www.dropbox.com/sh/1g4fsap2re78npf/AAAIDFSSb8KU26nl98dBy6_oa/workspace_robot.zip).
 
-4. Extract the files from the archive and copy should not cause any trouble with the workspace and the path to the includes.
+4. Extract the files from the archive, rename the folder `workspace_robot` to `Robot-Workspace` and rename the folder `example` inside to `RoboLab`.
+
+5. Now copy this folder in the Repo and pull it again to overwrite the example files.
+
+6. **You're done!**
 
 
-If you want to run the Simulation, wait until the corresponding instruction is added here.
+If you want to run the Simulation, follow these steps:
 
+1. Git-clone the Repo.
+
+2. If you have not already, install the `Eclipse IDE for C/C++` (can be found [here](http://www.eclipse.org)) on your computer and follow the steps 8 - 16 provided in the [HowTo-File](https://www.dropbox.com/sh/1g4fsap2re78npf/AACJvdiu4OgfuEIxI9zx_3Mba/How_to_start.txt).
+
+3. Download the Eclipse-Workspace for the Simulation from [here](https://www.dropbox.com/sh/1g4fsap2re78npf/AADFN1Pjng5CqbAXEfx-IaBga/workspace_simulation.zip).
+
+4. Extract the files from the archive, rename the folder `workspace_simulation` to `Simulation-Workspace`.
+
+5. Now copy this folder in the Repo and pull it again to overwrite the example files.
+
+6. **You're done!**
 
 ## Additional Information
 
