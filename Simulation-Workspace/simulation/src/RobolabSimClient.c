@@ -17,6 +17,8 @@ struct node {
    * 0x00 (falsch) steht für "nicht befahrbar", (wahr) für befahrbar */
 } node[13][7];
 
+int token = 3;
+
 
 
 void initArray(void) {
@@ -101,16 +103,20 @@ int checkNodeAvailable(int x, int y, int dir) {
     return 0;
 }
 
+void backToStart(int x, int y, int dx, int dy) {
+  return;
+}
+
 
 int main(void) {
   int x = 6, y = 0, driveTo, running = 1;
 
   int dx = -6, dy = 0;
-  
+
   initArray();
-  
+
   hpointer heap;
-  
+
   Robot_Move(0,0);
 
   while(running) {
@@ -127,8 +133,8 @@ int main(void) {
         if(checkNodeAvailable(x, y, i))
           driveTo = i;
     }
-    
-    
+
+
     switch(driveTo) {
       case 0:
         printf("Go NORTH\n");
@@ -163,7 +169,14 @@ int main(void) {
         break;
     }
     if (running)
-        Robot_Move(x+dx,y+dy);
+        int found = Robot_Move(x+dx,y+dy);
+        if(found == ROBOT_TOKENFOUND)
+          token--;
+        if(!token) {
+          backToStart(x, y, dx, dy);
+          running = 0;
+        }
+
   }
 
 	return EXIT_SUCCESS;

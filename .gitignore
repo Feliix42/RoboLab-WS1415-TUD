@@ -22,6 +22,7 @@ Simulation-Workspace/simulation/src/RobolabSimClient
 *.exe
 *.out
 *.app
+*.bat
 
 #################
 ## Eclipse
