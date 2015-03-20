@@ -1,6 +1,10 @@
 #include "../h/Configuration.h"
 #include "../h/heap.h"
 
+
+#define X_SIZE 13
+#define Y_SIZE 13
+
 int direction = 0;
     /* aktuelle Blickrichtung des Roboters (am Beginn N)
      * 0 = N; 1 = O; 2 = S; 3 = W
@@ -17,17 +21,19 @@ struct node {
    * 0x00 (falsch) steht für "nicht befahrbar", (wahr) für befahrbar */
   int distance;
   int visitedByDijkstra; // 0=nein,1=ja
-} node[13][7];
+  int vorgaengerx, vorgaengery;
+} node[X_SIZE][Y_SIZE];
 
 int token = 3;
 hpointer knownNodes = NULL;
 int nodeCount = 0;
 
 
+
 void resetDistance(void) {
   int i, j;
-  for(i = 0; i < 13; i++) {
-    for(j = 0; j < 7; j++) {
+  for(i = 0; i < X_SIZE; i++) {
+    for(j = 0; j < Y_SIZE; j++) {
       node[i][j].distance = MAX_DISTANCE;
       node[i][j].visitedByDijkstra = 0;
     }
@@ -36,8 +42,8 @@ void resetDistance(void) {
 
 void initArray(void) {
   int i, j, d;
-  for(i = 0; i < 13; i++) {
-    for(j = 0; j < 7; j++) {
+  for(i = 0; i < X_SIZE; i++) {
+    for(j = 0; j < Y_SIZE; j++) {
       node[i][j].state = 2;
       for (d=0;d<4;d++) node[i][j].directions[d]=0;
     }
@@ -53,16 +59,16 @@ void dirToXY(int direction, int *dx, int *dy)
     *dy=0;
     switch(direction) {
     case 0:
-      *dy++;
+      *dy=*dy+1;
       break;
     case 1:
-      *dx++;
+      *dx=*dx+1;
       break;
     case 2:
-      *dy--;
+      *dy=*dy-1;
       break;
     case 3:
-      *dx--;
+      *dx=*dx-1;
       break;
   }
   return;
@@ -157,8 +163,6 @@ void go(int startx, int starty, int zielx, int ziely, int dx, int dy)
   
   while(nodesRemaining>0)
   {
-      printf("%d\n",nodesRemaining);
-  
       int mindistance=MAX_DISTANCE;
       int minx,miny;
       
@@ -166,6 +170,9 @@ void go(int startx, int starty, int zielx, int ziely, int dx, int dy)
       hpointer temp=knownNodes;
       while(temp != NULL)
       {
+        
+      
+      
         if (node[temp->x][temp->y].visitedByDijkstra==0)
         {
             if (node[temp->x][temp->y].distance < mindistance)
@@ -178,8 +185,6 @@ void go(int startx, int starty, int zielx, int ziely, int dx, int dy)
         temp=temp->next;
       }
       
-      printf("smallest");
-      
       int d;
       for(d=0;d<4;d++)
       {
@@ -188,24 +193,15 @@ void go(int startx, int starty, int zielx, int ziely, int dx, int dy)
             int mydistance=node[minx][miny].distance;
             int dx,dy;
             dirToXY(d,&dx,&dy);
-            printf("%d %d\n",minx+dx,miny+dy);
             
-            if (mydistance+1<node[minx+dy][miny+dy].distance)
-                node[minx+dy][miny+dy].distance=mydistance+1;
+            if (mydistance+1<node[minx+dx][miny+dy].distance)
+                node[minx+dx][miny+dy].distance=mydistance+1;
         }
       }
       
       node[minx][miny].visitedByDijkstra=1;
       nodesRemaining--;
   }
-  
-  
-  hpointer temp2=knownNodes;
-      while(temp2 != NULL)
-      {
-        printf("%d %d %d\n",temp2->x,temp2->y,node[temp2->x][temp2->y].distance);
-        temp2=temp2->next;
-      }
 }
 
 void backToStart(int x, int y, int dx, int dy) {
@@ -214,9 +210,9 @@ void backToStart(int x, int y, int dx, int dy) {
 }
 
 int main(void) {
-  int x = 6, y = 0, driveTo, running = 1;
+  int x = 6, y = 6, driveTo, running = 1;
 
-  int dx = -6, dy = 0;
+  int dx = -6, dy = -6;
 
   initArray();
 
