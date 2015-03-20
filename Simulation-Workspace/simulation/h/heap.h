@@ -1,11 +1,12 @@
+#include <stdlib.h>
+
 typedef struct heap* hpointer;
 struct heap {
   int x;
   int y;
-  hpointer prev;
   hpointer next;
 } heap;
 
 
-hpointer heap_push (int a, int b, hpointer h);
-int heap_pop(int *a, int *b);
+void heap_push (int x, int y, hpointer* h);
+int heap_pop(int *x, int *y, hpointer* h);
