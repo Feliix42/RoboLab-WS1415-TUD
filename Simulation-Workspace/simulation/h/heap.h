@@ -1,4 +1,4 @@
-typedef struct* heap hpointer;
+typedef struct heap* hpointer;
 struct heap {
   int x;
   int y;
@@ -7,5 +7,5 @@ struct heap {
 } heap;
 
 
-heap_push (int a, int b);
+void heap_push (int a, int b);
 int heap_pop(int *a, int *b);
