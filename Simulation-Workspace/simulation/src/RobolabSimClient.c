@@ -15,11 +15,20 @@ struct node {
   /* 0 - N    1 - O    2 - S    3 - W
    *
    * 0x00 (falsch) steht für "nicht befahrbar", (wahr) für befahrbar */
+  int distance;
 } node[13][7];
 
 int token = 3;
 
 
+void resetDistance(void) {
+  int i, j;
+  for(i = 0; i < 13; i++) {
+    for(j = 0; j < 7; j++) {
+      node[i][j].distance = MAX_DISTANCE;
+    }
+  }
+}
 
 void initArray(void) {
   int i, j;
@@ -28,7 +37,9 @@ void initArray(void) {
       node[i][j].state = 2;
     }
   }
+  resetDistance();
 }
+
 
 
 void checkIntersection(int x, int y) {
@@ -103,10 +114,16 @@ int checkNodeAvailable(int x, int y, int dir) {
     return 0;
 }
 
-void backToStart(int x, int y, int dx, int dy) {
-  return;
+
+void go(int startx, int starty, int zielx, int ziely, int dx, int dy)
+{
+  
 }
 
+void backToStart(int x, int y, int dx, int dy) {
+  go(x,y,0,0,dx,dy);
+  return;
+}
 
 int main(void) {
   int x = 6, y = 0, driveTo, running = 1;

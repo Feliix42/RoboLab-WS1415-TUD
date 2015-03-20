@@ -1,5 +1,8 @@
 #include <stdlib.h>
 
+//GEHOERT HIER NICHT HIN!!!11!!
+#define MAX_DISTANCE 65000
+
 typedef struct heap* hpointer;
 struct heap {
   int x;
