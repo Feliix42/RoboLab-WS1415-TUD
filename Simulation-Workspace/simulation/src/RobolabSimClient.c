@@ -128,26 +128,27 @@ int main(void) {
           driveTo = i;
     }
     
+    
     switch(driveTo) {
       case 0:
         printf("Go NORTH\n");
-        y++;
         heap_push(x,y,&heap);
+        y++;
         break;
       case 1:
         printf("Go EAST\n");
-        x++;
         heap_push(x,y,&heap);
+        x++;
         break;
       case 2:
         printf("Go SOUTH\n");
-        y--;
         heap_push(x,y,&heap);
+        y--;
         break;
       case 3:
         printf("Go WEST\n");
-        x--;
         heap_push(x,y,&heap);
+        x--;
         break;
       case 4:
         if (heap_pop(&x,&y,&heap))
@@ -161,8 +162,8 @@ int main(void) {
         }
         break;
     }
-    
-    Robot_Move(x+dx,y+dy);
+    if (running)
+        Robot_Move(x+dx,y+dy);
   }
 
 	return EXIT_SUCCESS;
