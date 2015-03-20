@@ -29,6 +29,9 @@ void initArray(void) {
 
 
 void checkIntersection(int x, int y) {
+  if (node[x][y].state == 1)
+    return;
+  
   int intersection = Robot_GetIntersections();
 
   if(intersection & NORTH) {
@@ -107,10 +110,11 @@ int main(void) {
     driveTo = 4;
     Robot_Move(a,b);
     printf("%d %d\n", a, b);
-    node[x][y].state = 1;
 
     checkIntersection(x, y);
 
+    node[x][y].state = 1;
+    
     int i;
     for(i = 0; i <= 3; i++) {
       if((node[x][y].directions[i]))
