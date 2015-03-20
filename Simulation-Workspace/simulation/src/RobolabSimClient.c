@@ -109,7 +109,7 @@ int main(void) {
   
   initArray();
   
-  hpointer heap;
+  hpointer heap = NULL;
   
   Robot_Move(0,0);
 
