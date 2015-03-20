@@ -1,5 +1,5 @@
 #include "../h/Configuration.h"
-#include "../h/RobolabSimClient.h"
+#include "../h/heap.h"
 
 int direction = 0;
     /* aktuelle Blickrichtung des Roboters (am Beginn N)
@@ -103,52 +103,64 @@ int checkNodeAvailable(int x, int y, int dir) {
 
 
 int main(void) {
-  int x = 6, y = 0, a = 0, b = 0, driveTo, running = 1;
+  int x = 6, y = 0, driveTo, running = 1;
 
+  int dx = -6, dy = 0;
+  
   initArray();
+  
+  Robot_Move(a,b);
 
   while(running) {
-    driveTo = 4;
-    Robot_Move(a,b);
-    printf("%d %d\n", a, b);
+    printf("%d %d\n", x+dx, y+dy);
 
     checkIntersection(x, y);
 
     node[x][y].state = 1;
 
+    driveTo = 4; //
     int i;
     for(i = 0; i <= 3; i++) {
       if((node[x][y].directions[i]))
         if(checkNodeAvailable(x, y, i))
           driveTo = i;
     }
-
+    
     switch(driveTo) {
       case 0:
         printf("Go NORTH\n");
-        b++;
         y++;
+        heap_push(x,y);
         break;
       case 1:
         printf("Go EAST\n");
-        a++;
         x++;
+        heap_push(x,y);
         break;
       case 2:
         printf("Go SOUTH\n");
-        b--;
         y--;
+        heap_push(x,y);
         break;
       case 3:
         printf("Go WEST\n");
-        a--;
         x--;
+        heap_push(x,y);
         break;
       case 4:
-        printf("Labyrinth vollständig erkundet.\nEnde.\n");
-        running = 0;
+        if (heap_pop(&x,&y))
+        {
+            printf("going back");
+        }
+        else
+        {
+            printf("Labyrinth vollständig erkundet.\nEnde.\n");
+            running = 0;
+        }
         break;
     }
+    
+    Robot_Move(x+dx,y+dy);
   }
 
 	return EXIT_SUCCESS;
