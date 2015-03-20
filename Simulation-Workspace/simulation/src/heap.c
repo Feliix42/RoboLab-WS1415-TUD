@@ -1,6 +1,6 @@
 #include "../h/heap.h"
 
-void heap_push (int a, int b) {
+hpointer heap_push (int a, int b) {
   return;
 }
 

@@ -7,5 +7,5 @@ struct heap {
 } heap;
 
 
-void heap_push (int a, int b);
+hpointer heap_push (int a, int b, hpointer h);
 int heap_pop(int *a, int *b);
