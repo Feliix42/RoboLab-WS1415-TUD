@@ -159,7 +159,7 @@ int main(void) {
       case 4:
         if (heap_pop(&x,&y,&heap))
         {
-            printf("going back");
+            printf("going back\n");
         }
         else
         {
@@ -169,6 +169,7 @@ int main(void) {
         break;
     }
     if (running)
+    {
         int found = Robot_Move(x+dx,y+dy);
         if(found == ROBOT_TOKENFOUND)
           token--;
@@ -176,7 +177,7 @@ int main(void) {
           backToStart(x, y, dx, dy);
           running = 0;
         }
-
+    }
   }
 
 	return EXIT_SUCCESS;
