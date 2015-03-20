@@ -109,7 +109,7 @@ int main(void) {
   
   initArray();
   
-  Robot_Move(a,b);
+  Robot_Move(0,0);
 
   while(running) {
     printf("%d %d\n", x+dx, y+dy);
