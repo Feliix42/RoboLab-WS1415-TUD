@@ -109,6 +109,8 @@ int main(void) {
   
   initArray();
   
+  hpointer heap;
+  
   Robot_Move(0,0);
 
   while(running) {
@@ -130,25 +132,25 @@ int main(void) {
       case 0:
         printf("Go NORTH\n");
         y++;
-        heap_push(x,y);
+        heap_push(x,y,&heap);
         break;
       case 1:
         printf("Go EAST\n");
         x++;
-        heap_push(x,y);
+        heap_push(x,y,&heap);
         break;
       case 2:
         printf("Go SOUTH\n");
         y--;
-        heap_push(x,y);
+        heap_push(x,y,&heap);
         break;
       case 3:
         printf("Go WEST\n");
         x--;
-        heap_push(x,y);
+        heap_push(x,y,&heap);
         break;
       case 4:
-        if (heap_pop(&x,&y))
+        if (heap_pop(&x,&y,&heap))
         {
             printf("going back");
         }
