@@ -1,4 +1,5 @@
 #include "../h/Configuration.h"
+#include "../h/RobolabSimClient.h"
 
 int direction = 0;
     /* aktuelle Blickrichtung des Roboters (am Beginn N)
@@ -31,7 +32,7 @@ void initArray(void) {
 void checkIntersection(int x, int y) {
   if (node[x][y].state == 1)
     return;
-  
+
   int intersection = Robot_GetIntersections();
 
   if(intersection & NORTH) {
@@ -114,7 +115,7 @@ int main(void) {
     checkIntersection(x, y);
 
     node[x][y].state = 1;
-    
+
     int i;
     for(i = 0; i <= 3; i++) {
       if((node[x][y].directions[i]))
