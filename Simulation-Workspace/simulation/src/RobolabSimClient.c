@@ -16,9 +16,12 @@ struct node {
    *
    * 0x00 (falsch) steht für "nicht befahrbar", (wahr) für befahrbar */
   int distance;
+  int visitedByDijkstra; // 0=nein,1=ja
 } node[13][7];
 
 int token = 3;
+hpointer knownNodes = NULL;
+int nodeCount = 0;
 
 
 void resetDistance(void) {
@@ -26,18 +29,43 @@ void resetDistance(void) {
   for(i = 0; i < 13; i++) {
     for(j = 0; j < 7; j++) {
       node[i][j].distance = MAX_DISTANCE;
+      node[i][j].visitedByDijkstra = 0;
     }
   }
 }
 
 void initArray(void) {
-  int i, j;
+  int i, j, d;
   for(i = 0; i < 13; i++) {
     for(j = 0; j < 7; j++) {
       node[i][j].state = 2;
+      for (d=0;d<4;d++) node[i][j].directions[d]=0;
     }
   }
   resetDistance();
+}
+
+
+
+void dirToXY(int direction, int *dx, int *dy)
+{
+    *dx=0;
+    *dy=0;
+    switch(direction) {
+    case 0:
+      *dy++;
+      break;
+    case 1:
+      *dx++;
+      break;
+    case 2:
+      *dy--;
+      break;
+    case 3:
+      *dx--;
+      break;
+  }
+  return;
 }
 
 
@@ -50,44 +78,48 @@ void checkIntersection(int x, int y) {
 
   if(intersection & NORTH) {
     node[x][y].directions[0] = 0x01;
-    if(node[x][y+1].state != 1)
+    node[x][y+1].directions[2] = 1;
+    if(node[x][y+1].state == 2)
+    {
       node[x][y+1].state = 0;
-  } else {
-    node[x][y].directions[0] = 0x00;
-    if((node[x][y+1].state != 0) && (node[x][y+1].state != 1))
-      node[x][y+1].state = 2;
+      heap_push(x,y+1,&knownNodes);
+      nodeCount++;
+    }
   }
 
 
   if(intersection & EAST) {
     node[x][y].directions[1] = 0x01;
-    if(node[x+1][y].state != 1)
+    node[x+1][y].directions[3] = 1;
+    if(node[x+1][y].state == 2)
+    {
       node[x+1][y].state = 0;
-  } else {
-    node[x][y].directions[1] = 0x00;
-    if((node[x+1][y].state != 0) && (node[x+1][y].state != 1))
-      node[x+1][y].state = 2;
+      heap_push(x+1,y,&knownNodes);
+      nodeCount++;
+    }
   }
 
   if(intersection & SOUTH) {
     node[x][y].directions[2] = 0x01;
-    if(node[x][y-1].state != 1)
+    node[x][y-1].directions[0] = 1;
+    if(node[x][y-1].state == 2)
+    {
       node[x][y-1].state = 0;
-  } else {
-    node[x][y].directions[2] = 0x00;
-    if((node[x][y-1].state != 0) && (node[x][y-1].state != 1))
-      node[x][y-1].state = 2;
+      heap_push(x,y-1,&knownNodes);
+      nodeCount++;
+    }
   }
 
 
   if(intersection & WEST) {
     node[x][y].directions[3] = 0x01;
-    if(node[x-1][y].state != 1)
+    node[x-x][y].directions[1] = 1;
+    if(node[x-1][y].state == 2)
+    {
       node[x-1][y].state = 0;
-  } else {
-    node[x][y].directions[3] = 0x00;
-    if((node[x-1][y].state != 0) && (node[x-1][y].state != 1))
-      node[x-1][y].state = 2;
+      heap_push(x-1,y,&knownNodes);
+      nodeCount++;
+    }
   }
 }
 
@@ -117,7 +149,63 @@ int checkNodeAvailable(int x, int y, int dir) {
 
 void go(int startx, int starty, int zielx, int ziely, int dx, int dy)
 {
+  resetDistance();
+  node[startx][starty].distance=0;
   
+  int nodesRemaining = nodeCount;
+  
+  
+  while(nodesRemaining>0)
+  {
+      printf("%d\n",nodesRemaining);
+  
+      int mindistance=MAX_DISTANCE;
+      int minx,miny;
+      
+      // Knoten mit kleinster distance suchen
+      hpointer temp=knownNodes;
+      while(temp != NULL)
+      {
+        if (node[temp->x][temp->y].visitedByDijkstra==0)
+        {
+            if (node[temp->x][temp->y].distance < mindistance)
+            {
+              mindistance = node[temp->x][temp->y].distance;
+              minx=temp->x;
+              miny=temp->y;
+            }
+        }
+        temp=temp->next;
+      }
+      
+      printf("smallest");
+      
+      int d;
+      for(d=0;d<4;d++)
+      {
+        if (node[minx][miny].directions[d])
+        {
+            int mydistance=node[minx][miny].distance;
+            int dx,dy;
+            dirToXY(d,&dx,&dy);
+            printf("%d %d\n",minx+dx,miny+dy);
+            
+            if (mydistance+1<node[minx+dy][miny+dy].distance)
+                node[minx+dy][miny+dy].distance=mydistance+1;
+        }
+      }
+      
+      node[minx][miny].visitedByDijkstra=1;
+      nodesRemaining--;
+  }
+  
+  
+  hpointer temp2=knownNodes;
+      while(temp2 != NULL)
+      {
+        printf("%d %d %d\n",temp2->x,temp2->y,node[temp2->x][temp2->y].distance);
+        temp2=temp2->next;
+      }
 }
 
 void backToStart(int x, int y, int dx, int dy) {
@@ -132,6 +220,10 @@ int main(void) {
 
   initArray();
 
+  heap_push(x,y,&knownNodes);
+  nodeCount++;
+  
+  
   hpointer heap = NULL;
   
   Robot_Move(0,0);
@@ -140,7 +232,7 @@ int main(void) {
     printf("%d %d\n", x+dx, y+dy);
 
     checkIntersection(x, y);
-
+    
     node[x][y].state = 1;
 
     driveTo = 4; //
@@ -197,6 +289,6 @@ int main(void) {
         }
     }
   }
-
+backToStart(x, y, dx, dy);
 	return EXIT_SUCCESS;
 }
