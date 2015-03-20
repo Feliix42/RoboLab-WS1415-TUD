@@ -5,7 +5,7 @@ void heap_push (int x, int y, hpointer* h) {
   q->x = x;
   q->y = y;
   q->next = *h;
-  h = &q;
+  *h = q;
   return;
 }
 
