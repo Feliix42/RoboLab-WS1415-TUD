@@ -153,7 +153,7 @@ int checkNodeAvailable(int x, int y, int dir) {
 }
 
 
-void go(int startx, int starty, int zielx, int ziely, int dx, int dy)
+void go(int startx, int starty, int zielx, int ziely, int simudx, int simudy)
 {
   resetDistance();
   node[startx][starty].distance=0;
@@ -195,17 +195,59 @@ void go(int startx, int starty, int zielx, int ziely, int dx, int dy)
             dirToXY(d,&dx,&dy);
             
             if (mydistance+1<node[minx+dx][miny+dy].distance)
+            {
                 node[minx+dx][miny+dy].distance=mydistance+1;
+                node[minx+dx][miny+dy].vorgaengerx=minx;
+                node[minx+dx][miny+dy].vorgaengery=miny;
+                
+                printf("%d %d -> %d %d\n",minx,miny,minx+dx,miny+dy);
+            }
         }
       }
       
       node[minx][miny].visitedByDijkstra=1;
       nodesRemaining--;
+      
+      if (minx==zielx && miny==ziely)
+        break;
+  }
+  
+  int i,j;
+  for (j=0;j<Y_SIZE;j++)
+  {
+  for (i=0;i<X_SIZE;i++)
+  {
+  printf("%d\t",node[i][j].distance);
+  }
+  printf("\n");
+  }
+  
+  printf("found a way\n");
+  
+  // create way
+  hpointer way = NULL;
+  int tx=zielx,ty=ziely;
+  while (tx!=startx||ty!=starty)
+  {
+    printf("%d %d <- %d %d\n",tx,ty,node[tx][ty].vorgaengerx,node[tx][ty].vorgaengery);
+    //heap_push(tx,ty,&way);
+    tx=node[tx][ty].vorgaengerx;
+    ty=node[tx][ty].vorgaengery;
+  }
+  
+  printf("created a way\n");
+  
+  // follow way
+  hpointer temp=way;
+  while(temp != NULL)
+  {
+    Robot_Move(temp->x+simudx,temp->y+simudy);
+    temp=temp->next;
   }
 }
 
 void backToStart(int x, int y, int dx, int dy) {
-  go(x,y,0,0,dx,dy);
+  go(x,y,6,6,dx,dy);
   return;
 }
 
