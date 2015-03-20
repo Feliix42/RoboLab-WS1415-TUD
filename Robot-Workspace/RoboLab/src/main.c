@@ -1,5 +1,11 @@
 #include "../h/main.h"
 int color;
+int token = 0;
+int dir = 0;
+int N;
+int W;
+int S;
+int E;
 
 /// DO NOT DELETE THIS METHOD
 /// It is called every 1ms and e.g. can be used for implementing a
@@ -43,9 +49,20 @@ void stop() {
 	ecrobot_set_motor_speed(NXT_PORT_C, 0);
 }
 
+int kompset(int turndir) {
+	dir = (dir + turndir)%4;
+	return 0;
+}
+
+int kompget(int turndir) {
+	turndir = (dir + turndir)%4;
+	stop();
+	return 0;
+}
+
 void sound(){
-	//ecrobot_sound_tone(200, 200, 40);
-	ecrobot_sound_tone(262, 1500, 30);
+	ecrobot_sound_tone(440, 1000, 10);
+	/*ecrobot_sound_tone(262, 1500, 30);
 	systick_wait_ms(500);
 	ecrobot_sound_tone(294, 1500, 30);
 	systick_wait_ms(500);
@@ -66,8 +83,7 @@ void sound(){
 	ecrobot_sound_tone(440, 1500, 30);
 	systick_wait_ms(500);
 	ecrobot_sound_tone(392, 3000, 30);
-	systick_wait_ms(500);
-	ecrobot_sound_tone(392, 3000, 30);
+	*/
 }
 
 void set() {
@@ -87,6 +103,7 @@ void set() {
 	systick_wait_ms(400);
 	stop();
 	int colorw;
+	colorw = 0;
 	while (i<20) {
 		colorw = ecrobot_get_light_sensor(NXT_PORT_S3);
 		i++;
@@ -129,13 +146,26 @@ int search() {
   return 0;
 }
 
+void tokenfound() {
+	ecrobot_set_motor_speed(NXT_PORT_B, -53);
+	ecrobot_set_motor_speed(NXT_PORT_C, -50);
+	systick_wait_ms(500);
+	stop();
+	token++;
+	sound();
+	systick_wait_ms(3000);
+}
+
 void drive() {
 	int running = 1;
 	int colort;
 	go();
 	systick_wait_ms(50);
-	//gucken obs noch schwarz ist, sonst wird gesucht
+	//gucken ob Token da steht und obs noch schwarz ist, sonst wird gesucht
 	while(running){
+		if(ecrobot_get_touch_sensor(NXT_PORT_S1) || ecrobot_get_touch_sensor(NXT_PORT_S2)) {
+					tokenfound();
+					go();  }
 		colort = ecrobot_get_light_sensor(NXT_PORT_S3);
 		if ((colort) < (color))
 			running = 0;
@@ -143,46 +173,66 @@ void drive() {
 	//bei 0 ist alles weiß -> Knoten
 	int sw = search();
 	if (sw > 0)
-		{ecrobot_status_monitor("Weiter gehts!");
 		drive();
-		}
 }
 
 void turn90 (int t) {
-	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
+	t = t * 285;
+	int revn;
+	revn = ecrobot_get_motor_rev(NXT_PORT_C);
 	if (t>0) {
 		turnl();
-		t = t * 275;
-		int revn = ecrobot_get_motor_rev(NXT_PORT_C);
 		while (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (t)) {
 		}
 	}
 	else {
 		turnr();
-		t = t * 275;
-		int revn = ecrobot_get_motor_rev(NXT_PORT_C);
 		while (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (t)) {
 		}
 	}
 
 }
 
+int knotentoken() {
+	go();			//gucken ob ein Token da steht
+	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
+	while (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (200)){
+		if(ecrobot_get_touch_sensor(NXT_PORT_S1))
+			revn = revn - 300;
+		if(ecrobot_get_touch_sensor(NXT_PORT_S2))
+			revn = revn - 300;
+	}
+	if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > 290) {
+		tokenfound();
+		return 1;
+	}
+	return 0;
+}
+
+void NESW(int s) {
+	s = (dir + s)%4;
+	switch (s) {
+		case 0: N = 1; break;
+		case 1: E = 1; break;
+		case 2: S = 1; break;
+		case 3: W = 1; break;
+	}
+
+}
+
 void knoten() {
 	ecrobot_status_monitor("Knoten");
-	stop();
-	// sound();
-	go();
-	turnrev(200);
 							//100ms = 0,9...cm
 							//5800ms = 365°
 							//980rev(B) = 360°
 	int direct = 1 * search();	//guckt ob straight da ist
+
 	turnl();
 	int i = 1;
 	int j = 0;			//guckt ob left da ist
 	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
 	while (i) {
-		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (815))
+		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (835))
 			i = 0;
 		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (350)) {
 			if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (200)) {
@@ -193,38 +243,54 @@ void knoten() {
 	}
 	direct = direct + 2 * j;
 	direct = direct + 4 * search();	//guckt ob right da ist
+	N = 0;
+	E = 0;
+	S = 0;
+	W = 0;
+	NESW(2);   //Kante umrechnen die zurück geht
 	switch (direct) {
 		case 0: ecrobot_status_monitor("haha Sackgasse"); break;
-		case 1: ecrobot_status_monitor("nur Gerade"); break;
-		case 2: ecrobot_status_monitor("nur Links"); break;
-		case 3: ecrobot_status_monitor("Links u Gerade"); break;
-		case 4: ecrobot_status_monitor("nur Rechts"); break;
-		case 5: ecrobot_status_monitor("Rechts u Gerade"); break;
-		case 6: ecrobot_status_monitor("Links u Rechts"); break;
-		case 7: ecrobot_status_monitor("ueberall Kanten");
+		case 1: ecrobot_status_monitor("nur Gerade"); NESW(0); break;
+		case 2: ecrobot_status_monitor("nur Links"); NESW(3); break;
+		case 3: ecrobot_status_monitor("Links u Gerade"); NESW(3); NESW(0); break;
+		case 4: ecrobot_status_monitor("nur Rechts"); NESW(1); break;
+		case 5: ecrobot_status_monitor("Rechts u Gerade"); NESW(1); NESW(0); break;
+		case 6: ecrobot_status_monitor("Links u Rechts"); NESW(1); NESW(3); break;
+		case 7: ecrobot_status_monitor("ueberall Kanten"); NESW(0); NESW(1); NESW(3);
 	}
+	stop();
+	systick_wait_ms(2000);
+	display_clear(1);
+	display_int(N, 2);
+	display_int(E, 2);
+	display_int(S, 2);
+	display_int(W, 2);
+	display_update();
+	systick_wait_ms(2000);
 	//ohne was zu tun gehts nach rechts
 	switch (direct) {
-		case 0: turn90(-1); break;
-		case 1: turn90(1); break;
-		case 2: turn90(2); break;
-		case 3: turn90(1); break;
-		case 4: break;
-		case 5: turn90(1); break;
-		case 6: turn90(0); break;
-		case 7: turn90(2); break;
+		case 0: turn90(-1); kompset(2); break;
+		case 1: turn90(1); kompset(0); break;
+		case 2: turn90(2); kompset(3); break;
+		case 3: turn90(1); kompset(0);break;
+		case 4: kompset(1); break;
+		case 5: turn90(1); kompset(0); break;
+		case 6: turn90(0); kompset(1); break;
+		case 7: turn90(2); kompset(3); break;
 	}
 }
 
 TASK(OSEK_Main_Task) {
-
 		ecrobot_set_light_sensor_active(NXT_PORT_S3);
 		int a=0;
+		int kn = 0;
 		set();
 		while (a<10){
 			a++;
 			drive();
-			knoten();
+			kn = knotentoken();
+			if (kn == 0)
+				knoten();
 		}
 
 
@@ -253,8 +319,10 @@ TASK(OSEK_Main_Task) {
 		if ((ecrobot_get_motor_rev(NXT_PORT_B) > 980) //360°
 		systick_wait_ms(5000);
 		*/
-		ecrobot_status_monitor("Ende im Gelaende!");
+		ecrobot_status_monitor("My name is Horst");
 		stop();
+		systick_wait_ms(3000);
+		ecrobot_status_monitor("Horst Horst");
 		while(1){
 
 		}
