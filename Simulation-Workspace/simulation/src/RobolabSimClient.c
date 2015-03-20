@@ -174,6 +174,7 @@ int main(void) {
         if(found == ROBOT_TOKENFOUND)
           token--;
         if(!token) {
+          printf("found every token!");
           backToStart(x, y, dx, dy);
           running = 0;
         }
