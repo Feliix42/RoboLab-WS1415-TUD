@@ -316,6 +316,5 @@ int main(void) {
         }
     }
   }
-backToStart(x, y, dx, dy);
 	return EXIT_SUCCESS;
 }
