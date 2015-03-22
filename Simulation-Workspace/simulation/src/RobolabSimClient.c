@@ -153,8 +153,16 @@ int checkNodeAvailable(int x, int y, int dir) {
 }
 
 
-void go(int startx, int starty, int zielx, int ziely, int simudx, int simudy)
+void go(int startx, int starty, int zielx, int ziely, int simudx, int simudy,hpointer *nextSteps)
 {
+  int goThisWay = 0;
+  if (nextSteps == NULL)
+  {
+    goThisWay=1;
+    hpointer temphp = NULL;
+    nextSteps = &temphp;
+  }
+
   resetDistance();
   node[startx][starty].distance=0;
   
@@ -212,22 +220,23 @@ void go(int startx, int starty, int zielx, int ziely, int simudx, int simudy)
   
   
   // create way
-  hpointer way = NULL;
   int tx=zielx,ty=ziely,ntx;
   while (tx!=startx||ty!=starty)
   {
-    heap_push(tx,ty,&way);
+    heap_push(tx,ty,nextSteps);
     ntx=node[tx][ty].vorgaengerx;
     ty=node[tx][ty].vorgaengery;
     tx=ntx;
   }
   
-  // follow way
-  hpointer temp=way;
-  while(temp != NULL)
+  if (goThisWay)
   {
-    Robot_Move(temp->x+simudx,temp->y+simudy);
-    temp=temp->next;
+     hpointer temp = *nextSteps;
+     while (temp!=NULL)
+     {
+        Robot_Move(temp->x+simudx,temp->y+simudy);
+        temp=temp->next;
+     }
   }
 }
 
@@ -263,8 +272,8 @@ int findBacktrackNode(int *ox, int *oy, hpointer *heap)
     return 0;
 }
 
-void backToStart(int x, int y, int dx, int dy) {
-  go(x,y,6,6,dx,dy);
+void backToStart(int x, int y, int dx, int dy, hpointer *nextSteps) {
+  go(x,y,6,6,dx,dy,nextSteps);
   return;
 }
 
@@ -328,6 +337,8 @@ int main(void) {
             if (findBacktrackNode(&bx,&by,&heap))
             {
                 printf("going back to %d %d\n",bx,by);
+                go(x,y,bx,by,dx,dy,&nextSteps);
+                heap_pop(&x,&y,&nextSteps);
             }
             else
             {
@@ -346,7 +357,7 @@ int main(void) {
           token--;
         if(!token) {
           printf("found every token!\n");
-          backToStart(x, y, dx, dy);
+          backToStart(x, y, dx, dy, NULL);
           running = 0;
         }
     }
