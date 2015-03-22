@@ -1,9 +1,4 @@
-#include "../h/Configuration.h"
-#include "../h/heap.h"
-
-
-#define X_SIZE 13
-#define Y_SIZE 13
+#include "../h/RobolabSimClient.h"
 
 int direction = 0;
     /* aktuelle Blickrichtung des Roboters (am Beginn N)
@@ -12,17 +7,6 @@ int direction = 0;
      * IDEE: Wenn der Roboter an die Kreuzung kommt:
      * Biegt er RECHTS ab, erhöhe direction um 1 (mod 4).
      * Biegt er LINKS ab, vermindere direction um 1 (mod 4). */
-
-struct node {
-  int state;        // 0 for unvisited, 1 for visited, 2 for non-existing/unreachable
-  char directions[4];   // in welche Richtungen kann man fahren?
-  /* 0 - N    1 - O    2 - S    3 - W
-   *
-   * 0x00 (falsch) steht für "nicht befahrbar", (wahr) für befahrbar */
-  int distance;
-  int visitedByDijkstra; // 0=nein,1=ja
-  int vorgaengerx, vorgaengery;
-} node[X_SIZE][Y_SIZE];
 
 int token = 3;
 hpointer knownNodes = NULL;
@@ -167,15 +151,15 @@ void go(int startx, int starty, int targetx, int targety, int simudx, int simudy
 
   resetDistance(); // Initialisation for dijkstra
   node[startx][starty].distance=0; // starting point
-  
+
   int nodesRemaining = nodeCount;
-  
-  
+
+
   while(nodesRemaining>0) // there are more nodes out there
   {
       int mindistance=MAX_DISTANCE; // searching the node with shortest distance
       int minx,miny;
-      
+
       hpointer temp=knownNodes;
       while(temp != NULL) // go through the list
       {
@@ -190,7 +174,7 @@ void go(int startx, int starty, int targetx, int targety, int simudx, int simudy
         }
         temp=temp->next; // next list entry
       }
-      
+
       int d;
       for(d=0;d<4;d++) // propagate the distance to all neighbours
       {
@@ -199,7 +183,7 @@ void go(int startx, int starty, int targetx, int targety, int simudx, int simudy
             int mydistance=node[minx][miny].distance; // distance of our current node
             int dx,dy;
             dirToXY(d,&dx,&dy);
-            
+
             if (mydistance+1<node[minx+dx][miny+dy].distance) // it's better to go over our node to reach the other node
             {
                 node[minx+dx][miny+dy].distance=mydistance+1; // set a new distance for the other node
@@ -208,16 +192,16 @@ void go(int startx, int starty, int targetx, int targety, int simudx, int simudy
             }
         }
       }
-      
+
       node[minx][miny].visitedByDijkstra=1; // we just visited this node
       nodesRemaining--; // one less out there
-      
+
       if (minx==targetx && miny==targety) // is this already the target node?
         break; // dijkstra found the nearest way to it.
-        
+
   } // we set all the distances and predecessors we need
-  
-  
+
+
   // create way
   int tx=targetx,ty=targety,ntx;
   while (tx!=startx||ty!=starty)
@@ -227,7 +211,7 @@ void go(int startx, int starty, int targetx, int targety, int simudx, int simudy
     ty=node[tx][ty].vorgaengery;
     tx=ntx;
   }
-  
+
   if (goThisWay) // do we want to go this way NOW?
   {
      hpointer temp = *nextSteps;
@@ -247,7 +231,7 @@ int findBacktrackNode(int *ox, int *oy, hpointer *heap)
     while (heap_pop(&x,&y,heap)) // go through the nodes
     {
         int waysremaining = 0;
-        
+
         int i;
         for(i = 0; i <= 3; i++) {
           if((node[x][y].directions[i])) // check for all directions...
@@ -259,15 +243,15 @@ int findBacktrackNode(int *ox, int *oy, hpointer *heap)
             }
           }
         }
-        
+
         if (waysremaining) // there is a unvisited node near this node
         {
-            *ox = x; //return that node 
+            *ox = x; //return that node
             *oy = y;
             return 1;
         }
     }
-    
+
     return 0; // there was nothing.
 }
 
@@ -286,23 +270,23 @@ int main(void) {
 
   heap_push(x,y,&knownNodes);
   nodeCount++;
-  
-  
+
+
   hpointer heap = NULL;
   hpointer nextSteps = NULL;
-  
+
   Robot_Move(0,0);
 
   while(running) {
     printf("%d %d\n", x+dx, y+dy);
 
     checkIntersection(x, y);
-    
+
     node[x][y].state = 1;
 
     if (!heap_pop(&x,&y,&nextSteps)) // no given way? x/y is the next step otherwise
     {
-        driveTo = 4; //
+        driveTo = 4;
         int i;
         for(i = 0; i <= 3; i++) {
           if((node[x][y].directions[i]))
@@ -311,7 +295,7 @@ int main(void) {
         }
 
         int bx,by;
-            
+
         switch(driveTo) {
           case 0:
             printf("Go NORTH\n");
@@ -348,8 +332,8 @@ int main(void) {
             break;
         }
     }
-    
-    
+
+
     if (running)
     {
         int found = Robot_Move(x+dx,y+dy);

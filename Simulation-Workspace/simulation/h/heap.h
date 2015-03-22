@@ -1,7 +1,6 @@
 #include <stdlib.h>
 
-//GEHOERT HIER NICHT HIN!!!11!!
-#define MAX_DISTANCE 65000
+// DATA STRUCTURES
 
 typedef struct heap* hpointer;
 struct heap {
@@ -10,6 +9,7 @@ struct heap {
   hpointer next;
 } heap;
 
+// FUNCTIONS
 
 void heap_push (int x, int y, hpointer* h);
 int heap_pop(int *x, int *y, hpointer* h);
