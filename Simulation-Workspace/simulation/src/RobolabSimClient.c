@@ -210,8 +210,6 @@ void go(int startx, int starty, int zielx, int ziely, int simudx, int simudy)
         break;
   }
   
-  printf("found a way\n");
-  
   
   // create way
   hpointer way = NULL;
@@ -223,8 +221,6 @@ void go(int startx, int starty, int zielx, int ziely, int simudx, int simudy)
     ty=node[tx][ty].vorgaengery;
     tx=ntx;
   }
-  
-  printf("created a way\n");
   
   // follow way
   hpointer temp=way;
@@ -310,7 +306,7 @@ int main(void) {
         if(found == ROBOT_TOKENFOUND)
           token--;
         if(!token) {
-          printf("found every token!");
+          printf("found every token!\n");
           backToStart(x, y, dx, dy);
           running = 0;
         }
