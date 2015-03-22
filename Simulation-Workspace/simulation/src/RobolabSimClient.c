@@ -231,6 +231,38 @@ void go(int startx, int starty, int zielx, int ziely, int simudx, int simudy)
   }
 }
 
+
+// return 1 if found one, 0 if there are no more
+int findBacktrackNode(int *ox, int *oy, hpointer *heap)
+{
+    int x,y;
+    while (heap_pop(&x,&y,heap))
+    {
+        int waysremaining = 0;
+        
+        int i;
+        for(i = 0; i <= 3; i++) {
+          if((node[x][y].directions[i]))
+          {
+            if(checkNodeAvailable(x, y, i))
+            {
+              waysremaining = 1;
+              break;
+            }
+          }
+        }
+        
+        if (waysremaining)
+        {
+            *ox = x;
+            *oy = y;
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
 void backToStart(int x, int y, int dx, int dy) {
   go(x,y,6,6,dx,dy);
   return;
@@ -248,6 +280,7 @@ int main(void) {
   
   
   hpointer heap = NULL;
+  hpointer nextSteps = NULL;
   
   Robot_Move(0,0);
 
@@ -258,48 +291,54 @@ int main(void) {
     
     node[x][y].state = 1;
 
-    driveTo = 4; //
-    int i;
-    for(i = 0; i <= 3; i++) {
-      if((node[x][y].directions[i]))
-        if(checkNodeAvailable(x, y, i))
-          driveTo = i;
-    }
-
-
-    switch(driveTo) {
-      case 0:
-        printf("Go NORTH\n");
-        heap_push(x,y,&heap);
-        y++;
-        break;
-      case 1:
-        printf("Go EAST\n");
-        heap_push(x,y,&heap);
-        x++;
-        break;
-      case 2:
-        printf("Go SOUTH\n");
-        heap_push(x,y,&heap);
-        y--;
-        break;
-      case 3:
-        printf("Go WEST\n");
-        heap_push(x,y,&heap);
-        x--;
-        break;
-      case 4:
-        if (heap_pop(&x,&y,&heap))
-        {
-            printf("going back\n");
+    if (!heap_pop(&x,&y,&nextSteps)) // no given way
+    {
+        driveTo = 4; //
+        int i;
+        for(i = 0; i <= 3; i++) {
+          if((node[x][y].directions[i]))
+            if(checkNodeAvailable(x, y, i))
+              driveTo = i;
         }
-        else
-        {
-            printf("Labyrinth vollständig erkundet.\nEnde.\n");
-            running = 0;
+
+        int bx,by;
+            
+        switch(driveTo) {
+          case 0:
+            printf("Go NORTH\n");
+            heap_push(x,y,&heap);
+            y++;
+            break;
+          case 1:
+            printf("Go EAST\n");
+            heap_push(x,y,&heap);
+            x++;
+            break;
+          case 2:
+            printf("Go SOUTH\n");
+            heap_push(x,y,&heap);
+            y--;
+            break;
+          case 3:
+            printf("Go WEST\n");
+            heap_push(x,y,&heap);
+            x--;
+            break;
+          case 4:
+            if (findBacktrackNode(&bx,&by,&heap))
+            {
+                printf("going back to %d %d\n",bx,by);
+            }
+            else
+            {
+                printf("Labyrinth vollständig erkundet.\nEnde.\n");
+                running = 0;
+            }
+            break;
         }
-        break;
     }
+    
+    
     if (running)
     {
         int found = Robot_Move(x+dx,y+dy);
