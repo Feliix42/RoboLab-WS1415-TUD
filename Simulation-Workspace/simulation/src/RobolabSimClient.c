@@ -275,7 +275,9 @@ int main(void) {
   hpointer heap = NULL;
   hpointer nextSteps = NULL;
 
-  Robot_Move(0,0);
+  int found = Robot_Move(0,0);
+  if(found == ROBOT_TOKENFOUND)
+    token--;
 
   while(running) {
     printf("%d %d\n", x+dx, y+dy);
@@ -336,7 +338,7 @@ int main(void) {
 
     if (running)
     {
-        int found = Robot_Move(x+dx,y+dy);
+        found = Robot_Move(x+dx,y+dy);
         if(found == ROBOT_TOKENFOUND)
           token--;
         if(!token) {
