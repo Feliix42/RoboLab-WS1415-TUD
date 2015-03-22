@@ -29,7 +29,7 @@ hpointer knownNodes = NULL;
 int nodeCount = 0;
 
 
-
+// Reset nodes for dijkstra
 void resetDistance(void) {
   int i, j;
   for(i = 0; i < X_SIZE; i++) {
@@ -40,6 +40,8 @@ void resetDistance(void) {
   }
 }
 
+
+//Init nodes
 void initArray(void) {
   int i, j, d;
   for(i = 0; i < X_SIZE; i++) {
@@ -52,7 +54,7 @@ void initArray(void) {
 }
 
 
-
+//get dx/dy from direction
 void dirToXY(int direction, int *dx, int *dy)
 {
     *dx=0;
@@ -152,89 +154,86 @@ int checkNodeAvailable(int x, int y, int dir) {
     return 0;
 }
 
-
-void go(int startx, int starty, int zielx, int ziely, int simudx, int simudy,hpointer *nextSteps)
+// find a way from startx/y to targetx/y. If nextSteps is NULL, the robot will instantly follow this way. If not, the waypoints will be added to nextSteps.
+void go(int startx, int starty, int targetx, int targety, int simudx, int simudy,hpointer *nextSteps)
 {
-  int goThisWay = 0;
+  int goThisWay = 0; // check nextSteps
   if (nextSteps == NULL)
   {
-    goThisWay=1;
+    goThisWay=1; // we want to go this way
     hpointer temphp = NULL;
-    nextSteps = &temphp;
+    nextSteps = &temphp; // temporary list
   }
 
-  resetDistance();
-  node[startx][starty].distance=0;
+  resetDistance(); // Initialisation for dijkstra
+  node[startx][starty].distance=0; // starting point
   
   int nodesRemaining = nodeCount;
   
   
-  while(nodesRemaining>0)
+  while(nodesRemaining>0) // there are more nodes out there
   {
-      int mindistance=MAX_DISTANCE;
+      int mindistance=MAX_DISTANCE; // searching the node with shortest distance
       int minx,miny;
       
-      // Knoten mit kleinster distance suchen
       hpointer temp=knownNodes;
-      while(temp != NULL)
+      while(temp != NULL) // go through the list
       {
-        
-      
-      
-        if (node[temp->x][temp->y].visitedByDijkstra==0)
+        if (node[temp->x][temp->y].visitedByDijkstra==0) // not visited yet
         {
-            if (node[temp->x][temp->y].distance < mindistance)
+            if (node[temp->x][temp->y].distance < mindistance) // distance is smaller than the minimunm
             {
-              mindistance = node[temp->x][temp->y].distance;
+              mindistance = node[temp->x][temp->y].distance; // it's the new minimum then!
               minx=temp->x;
               miny=temp->y;
             }
         }
-        temp=temp->next;
+        temp=temp->next; // next list entry
       }
       
       int d;
-      for(d=0;d<4;d++)
+      for(d=0;d<4;d++) // propagate the distance to all neighbours
       {
-        if (node[minx][miny].directions[d])
+        if (node[minx][miny].directions[d]) // is there an edge?
         {
-            int mydistance=node[minx][miny].distance;
+            int mydistance=node[minx][miny].distance; // distance of our current node
             int dx,dy;
             dirToXY(d,&dx,&dy);
             
-            if (mydistance+1<node[minx+dx][miny+dy].distance)
+            if (mydistance+1<node[minx+dx][miny+dy].distance) // it's better to go over our node to reach the other node
             {
-                node[minx+dx][miny+dy].distance=mydistance+1;
-                node[minx+dx][miny+dy].vorgaengerx=minx;
+                node[minx+dx][miny+dy].distance=mydistance+1; // set a new distance for the other node
+                node[minx+dx][miny+dy].vorgaengerx=minx; // and our node as the predecessor (that means "vorgaenger", according to PONS)
                 node[minx+dx][miny+dy].vorgaengery=miny;
             }
         }
       }
       
-      node[minx][miny].visitedByDijkstra=1;
-      nodesRemaining--;
+      node[minx][miny].visitedByDijkstra=1; // we just visited this node
+      nodesRemaining--; // one less out there
       
-      if (minx==zielx && miny==ziely)
-        break;
-  }
+      if (minx==targetx && miny==targety) // is this already the target node?
+        break; // dijkstra found the nearest way to it.
+        
+  } // we set all the distances and predecessors we need
   
   
   // create way
-  int tx=zielx,ty=ziely,ntx;
+  int tx=targetx,ty=targety,ntx;
   while (tx!=startx||ty!=starty)
   {
-    heap_push(tx,ty,nextSteps);
+    heap_push(tx,ty,nextSteps); // some predecessor jumping and saving the way
     ntx=node[tx][ty].vorgaengerx;
     ty=node[tx][ty].vorgaengery;
     tx=ntx;
   }
   
-  if (goThisWay)
+  if (goThisWay) // do we want to go this way NOW?
   {
      hpointer temp = *nextSteps;
      while (temp!=NULL)
      {
-        Robot_Move(temp->x+simudx,temp->y+simudy);
+        Robot_Move(temp->x+simudx,temp->y+simudy); // move move move
         temp=temp->next;
      }
   }
@@ -245,35 +244,36 @@ void go(int startx, int starty, int zielx, int ziely, int simudx, int simudy,hpo
 int findBacktrackNode(int *ox, int *oy, hpointer *heap)
 {
     int x,y;
-    while (heap_pop(&x,&y,heap))
+    while (heap_pop(&x,&y,heap)) // go through the nodes
     {
         int waysremaining = 0;
         
         int i;
         for(i = 0; i <= 3; i++) {
-          if((node[x][y].directions[i]))
+          if((node[x][y].directions[i])) // check for all directions...
           {
-            if(checkNodeAvailable(x, y, i))
+            if(checkNodeAvailable(x, y, i)) // if there is an unvisited node
             {
-              waysremaining = 1;
+              waysremaining = 1; // there is
               break;
             }
           }
         }
         
-        if (waysremaining)
+        if (waysremaining) // there is a unvisited node near this node
         {
-            *ox = x;
+            *ox = x; //return that node 
             *oy = y;
             return 1;
         }
     }
     
-    return 0;
+    return 0; // there was nothing.
 }
 
+// go back to start from current position x/y. instantly, if nextStep is NULL, added to nextSteps if is a pointer.
 void backToStart(int x, int y, int dx, int dy, hpointer *nextSteps) {
-  go(x,y,6,6,dx,dy,nextSteps);
+  go(x,y,6,6,dx,dy,nextSteps); // 6/6 is start
   return;
 }
 
@@ -300,7 +300,7 @@ int main(void) {
     
     node[x][y].state = 1;
 
-    if (!heap_pop(&x,&y,&nextSteps)) // no given way
+    if (!heap_pop(&x,&y,&nextSteps)) // no given way? x/y is the next step otherwise
     {
         driveTo = 4; //
         int i;
