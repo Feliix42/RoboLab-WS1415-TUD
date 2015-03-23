@@ -9,6 +9,13 @@
 
 /* add user headers here: */
 
-void hello_world();
+void set();				//Kalibriert. Einmal am Anfang
+void move();			//Fährt auf schwarzer Linie und auf Knoten drauf
+int knoten();			//Sucht auf Knoten mögliche Kanten, gibt Hex der Knoten aus
+void godi(int hex);			//dreht sich in absolute Richtung
+						//godi() muss nach knoten() kommen
+						//selbstständig für Rückweg nutzbar
+
+
 
 #endif /* MAIN_H_ */
