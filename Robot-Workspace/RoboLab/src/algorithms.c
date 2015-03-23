@@ -1,5 +1,4 @@
-#include "../h/RobolabSimClient.h"
-#include"../h/basics.h"
+#include "../h/algorithms.h"
 
 int token = 3;
 hpointer knownNodes = NULL;
@@ -128,7 +127,7 @@ void backToStart(int x, int y, int dx, int dy, hpointer *nextSteps) {
   return;
 }
 
-int main(void) {
+void brain(void) {
   int x = 6, y = 6, driveTo, running = 1;
 
   int dx = -6, dy = -6;
@@ -147,7 +146,7 @@ int main(void) {
     token--;
 
   while(running) {
-    printf("%d %d\n", x+dx, y+dy);
+    // printf("%d %d\n", x+dx, y+dy);       TODO
 
     checkIntersection(x, y, &knownNodes, &nodeCount);
 
@@ -167,35 +166,35 @@ int main(void) {
 
         switch(driveTo) {
           case 0:
-            printf("Go NORTH\n");
+            // printf("Go NORTH\n");          TODO
             heap_push(x,y,&heap);
             y++;
             break;
           case 1:
-            printf("Go EAST\n");
+            // printf("Go EAST\n");         TODO
             heap_push(x,y,&heap);
             x++;
             break;
           case 2:
-            printf("Go SOUTH\n");
+            // printf("Go SOUTH\n");          TODO
             heap_push(x,y,&heap);
             y--;
             break;
           case 3:
-            printf("Go WEST\n");
+            // printf("Go WEST\n");         TODO
             heap_push(x,y,&heap);
             x--;
             break;
           case 4:
             if (findBacktrackNode(&bx,&by,&heap))
             {
-                printf("going back to %d %d\n",bx,by);
+                // printf("going back to %d %d\n",bx,by);     TODO
                 dijkstra(x,y,bx,by,dx,dy,&nextSteps);
                 heap_pop(&x,&y,&nextSteps);
             }
             else
             {
-                printf("Labyrinth vollständig erkundet.\nEnde.\n");
+                // printf("Labyrinth vollständig erkundet.\nEnde.\n");      TODO
                 running = 0;
             }
             break;
@@ -209,11 +208,11 @@ int main(void) {
         if(found == ROBOT_TOKENFOUND)
           token--;
         if(!token) {
-          printf("found every token!\n");
+          // printf("found every token!\n");          TODO
           backToStart(x, y, dx, dy, NULL);
           running = 0;
         }
     }
   }
-	return EXIT_SUCCESS;
+	return;
 }

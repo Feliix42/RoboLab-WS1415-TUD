@@ -345,7 +345,7 @@ TASK(OSEK_Main_Task) {
 	}
 	godi(hex);		//dreht in die angegebene absolute Richtung
 	}
-
+	brain();
 	ecrobot_status_monitor("My name is Horst");
 	stop();
 	systick_wait_ms(3000);

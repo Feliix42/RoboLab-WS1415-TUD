@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 // DATA STRUCTURES
 
 typedef struct heap* hpointer;
