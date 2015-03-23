@@ -1,7 +1,6 @@
 Robot-Workspace/RoboLab/implementation.oil
 Robot-Workspace/RoboLab/kernel_cfg.c
 Simulation-Workspace/simulation/src/RobolabSimClient
-
 Robot-Workspace/RoboLab/kernel_id.h
 
 *.sh
