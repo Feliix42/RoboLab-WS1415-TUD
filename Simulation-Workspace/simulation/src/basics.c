@@ -129,13 +129,16 @@ int robot_move(int x, int y)
     
     if (dx==1)
     {
-        if (dy==1) direction=0;
-        else direction=0;
+        direction=1;
+    }
+    else if (dx==-1)
+    {
+        direction=3;
     }
     else
     {
         if (dy==1) direction=0;
-        else direction=0;
+        else direction=2;
     }
      
 
