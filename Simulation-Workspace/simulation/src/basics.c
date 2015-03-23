@@ -105,8 +105,10 @@ void checkIntersection(int x, int y, hpointer *knownNodes, int *nodeCount) {
 
 
 int checkNodeAvailable(int x, int y, int dir) {
-  dirToXY(dir, &x, &y);
-
+  int dx=0,dy=0;
+  dirToXY(dir, &dx, &dy);
+  x+=dx;
+  y+=dy;
   if(node[x][y].state == 0)
     return 1;
   else
