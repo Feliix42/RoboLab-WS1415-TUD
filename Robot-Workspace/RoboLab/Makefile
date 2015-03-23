@@ -1,7 +1,6 @@
 # Target specific macros
 TARGET = main
-TARGET_SOURCES = $(addprefix src/, \
-	main.c )
+TARGET_SOURCES = src/main.c src/algorithms.c src/heap.c src/basics.c
 TOPPERS_OSEK_OIL_SOURCE = ./main.oil
 
 # Don't modify below part

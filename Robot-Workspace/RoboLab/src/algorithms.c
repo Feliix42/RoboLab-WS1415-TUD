@@ -24,7 +24,7 @@ void dijkstra(int startx, int starty, int targetx, int targety, int simudx, int 
   while(nodesRemaining>0) // there are more nodes out there
   {
       int mindistance=MAX_DISTANCE; // searching the node with shortest distance
-      int minx,miny;
+      int minx=0,miny=0;
 
       hpointer temp=knownNodes;
       while(temp != NULL) // go through the list

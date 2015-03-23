@@ -1,3 +1,6 @@
+#ifndef BASICS_H_
+#define BASICS_H_
+
 #include "heap.h"
 
 // DEFINITIONS
@@ -10,6 +13,10 @@
 #define SOUTH 0x20
 #define WEST 0x40
 #define EAST 0x80
+
+#define ROBOT_FAIL        0x00
+#define ROBOT_SUCCESS     0x01
+#define ROBOT_TOKENFOUND  0x02
 
 // DATA STRUCTURES
 
@@ -26,9 +33,11 @@ struct node {
 
 //FUNCTIONS
 
-void resetdistance(void);
+void resetDistance(void);
 void initArray(void);
 void dirToXY(int direction, int *dx, int *dy);
 void checkIntersection(int x, int y, hpointer *knownNodes, int *nodeCount);
 int checkNodeAvailable(int x, int y, int dir);
 int robot_move(int x, int y);
+
+#endif // BASICS_H_
