@@ -50,7 +50,7 @@ void dirToXY(int direction, int *dx, int *dy)
 
 
 
-void checkIntersection(int x, int y) {
+void checkIntersection(int x, int y, hpointer *knownNodes, int *nodeCount) {
   if (node[x][y].state == 1)
     return;
 
@@ -62,8 +62,8 @@ void checkIntersection(int x, int y) {
     if(node[x][y+1].state == 2)
     {
       node[x][y+1].state = 0;
-      heap_push(x,y+1,&knownNodes);
-      nodeCount++;
+      heap_push(x,y+1,knownNodes);
+      (*nodeCount)++;
     }
   }
 
@@ -74,8 +74,8 @@ void checkIntersection(int x, int y) {
     if(node[x+1][y].state == 2)
     {
       node[x+1][y].state = 0;
-      heap_push(x+1,y,&knownNodes);
-      nodeCount++;
+      heap_push(x+1,y,knownNodes);
+      (*nodeCount)++;
     }
   }
 
@@ -85,8 +85,8 @@ void checkIntersection(int x, int y) {
     if(node[x][y-1].state == 2)
     {
       node[x][y-1].state = 0;
-      heap_push(x,y-1,&knownNodes);
-      nodeCount++;
+      heap_push(x,y-1,knownNodes);
+      (*nodeCount)++;
     }
   }
 
@@ -97,8 +97,8 @@ void checkIntersection(int x, int y) {
     if(node[x-1][y].state == 2)
     {
       node[x-1][y].state = 0;
-      heap_push(x-1,y,&knownNodes);
-      nodeCount++;
+      heap_push(x-1,y,knownNodes);
+      (*nodeCount)++;
     }
   }
 }

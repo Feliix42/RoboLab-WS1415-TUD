@@ -149,7 +149,7 @@ int main(void) {
   while(running) {
     printf("%d %d\n", x+dx, y+dy);
 
-    checkIntersection(x, y);
+    checkIntersection(x, y, &knownNodes, &nodeCount);
 
     node[x][y].state = 1;
 
