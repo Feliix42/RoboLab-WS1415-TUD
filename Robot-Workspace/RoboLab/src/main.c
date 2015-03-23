@@ -270,11 +270,7 @@ void NESW(int s) {	//passt Richtungsangaben an die absolute Richtung an
 
 int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Richtung speichern und lässt alles in die perfekte Richtung drehen. Also ein alles in allem total mega geiles Teil hier :)  Lass uns diese Funktion Gott umtaufen.
 	ecrobot_status_monitor("Knoten");
-							//100ms = 0,9...cm
-							//5800ms = 365°
-							//980rev(B) = 360°
 	int direct = 1 * search();	//guckt ob straight da ist
-
 	turnl();
 	int i = 1;
 	int j = 0;			//guckt ob left da ist
@@ -312,46 +308,37 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	W = W * 0x40;
 	E = E * 0x80;
 	stop();
-								//ohne was zu tun gehts nach rechts
 	return (N+S+W+E);
 }
 
 void godi(int a) {
 	int b = a;
 	a = dir - a;		//Berechnet aus absoluter Richtung, ob er L R usw. muss
-	//if ((a*a) > 6)
-		//a = a * (-1/3);
+	if ((a*a) > 6)
+		a = a * (-1/3);
 	turn90(a);
-	kompset((b-1)%4);
-	display_clear(1);
-		display_goto_xy(6,0);
-		display_int(dir, 8);
-		display_update();
+	kompset((b-dir)%4);
 }
 
-void laeuft(int hex) {
+int get_intersection () {
 	move();
-	knoten();		//startet Kantensuche am Knoten
+	return (knoten());		//startet Kantensuche am Knoten
+}
 
-	/*switch (hex) {			//rechnet die Richtung von den Softis in was richtiges
+void robot_move (int hex) {
+	switch (hex) {			//rechnet die Richtung von den Softis in was richtiges
 	case 0x10: hex = 0; break;//Norden
 	case 0x80: hex = 1; break;//Ostern-right
 	case 0x20: hex = 2; break;//Süden-back
 	case 0x40: hex = 3; break;//Westen-left
-	*/
-
+	} 
 	godi(hex);		//dreht in die angegebene absolute Richtung
 }
 
 TASK(OSEK_Main_Task) {
 	ecrobot_set_light_sensor_active(NXT_PORT_S3);
 	set();
-	laeuft(0);
-	laeuft(1);
-	laeuft(3);
-	laeuft(2);
-	laeuft(0);
-	laeuft(0);
+	//brain();					// TO DO von den Softis
 
 	ecrobot_status_monitor("My name is Horst");
 	stop();
