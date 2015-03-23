@@ -1,11 +1,11 @@
 #include "../h/main.h"
-int color;
-int token = 0;
-int dir = 0;
-int N;
-int W;
-int S;
-int E;
+int color;		//Mittelwert Schwarz-Weiß, zum Vergleichen
+int token = 0;	//Zahl der gefundenen Token
+int dir = 0;	//aktuelle Fahrtrichtung N oder Startrichtung = 0
+int N;			//Startrichtung
+int S;			//Hinten
+int E;			//Rechts
+int W;			//Links
 
 /// DO NOT DELETE THIS METHOD
 /// It is called every 1ms and e.g. can be used for implementing a
@@ -23,111 +23,185 @@ void ecrobot_device_terminate(void) {
 void go() {
 	ecrobot_set_motor_speed(NXT_PORT_B, 53);
 	ecrobot_set_motor_speed(NXT_PORT_C, 50);
-
 	// 205 rev(C) = 10cm bei 30 speed
 	// 205 rev(C) = 10,8cm bei 60 speed
 }
 
-void turnrev(int rev) {
+void turnrev(int rev) {		//Stoppt Bewegung nach bestimmter Rad-Grad Drehung
 	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
 	while (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (rev)){
 	}
 }
 
-void turnl() {
+void turnl() {		//Linksdrehung
 	ecrobot_set_motor_speed(NXT_PORT_B, -40);
 	ecrobot_set_motor_speed(NXT_PORT_C, 40);
 }
 
-void turnr() {
+void turnr() {		//Rechtsdrehung
 	ecrobot_set_motor_speed(NXT_PORT_B, 40);
 	ecrobot_set_motor_speed(NXT_PORT_C, -40);
 }
 
-void stop() {
+void stop() {		//Bremse
 	ecrobot_set_motor_speed(NXT_PORT_B, 0);
 	ecrobot_set_motor_speed(NXT_PORT_C, 0);
 }
 
-int kompset(int turndir) {
+int kompset(int turndir) {		//Speichert aktelle Fahrtrichtung
 	dir = (dir + turndir)%4;
 	return 0;
 }
 
-int kompget(int turndir) {
+int kompget(int turndir) {		//
 	turndir = (dir + turndir)%4;
 	stop();
 	return 0;
 }
 
-void sound(){
-	ecrobot_sound_tone(440, 1000, 10);
-	/*ecrobot_sound_tone(262, 1500, 30);
-	systick_wait_ms(500);
-	ecrobot_sound_tone(294, 1500, 30);
-	systick_wait_ms(500);
-	ecrobot_sound_tone(330, 1500, 30);
-	systick_wait_ms(500);
-	ecrobot_sound_tone(349, 1500, 30);
-	systick_wait_ms(500);
-	ecrobot_sound_tone(392, 3000, 30);
-	systick_wait_ms(500);
-	ecrobot_sound_tone(392, 3000, 30);
-	systick_wait_ms(500);
-	ecrobot_sound_tone(440, 1500, 30);
-	systick_wait_ms(500);
-	ecrobot_sound_tone(440, 1500, 30);
-	systick_wait_ms(500);
-	ecrobot_sound_tone(440, 1500, 30);
-	systick_wait_ms(500);
-	ecrobot_sound_tone(440, 1500, 30);
-	systick_wait_ms(500);
-	ecrobot_sound_tone(392, 3000, 30);
-	*/
+void on() {
+	ecrobot_set_light_sensor_active(NXT_PORT_S3);
 }
 
-void set() {
-	//Kalibrierung auf Schwarz und Weiß
-	int colorb;
+void off() {
+	ecrobot_set_light_sensor_inactive(NXT_PORT_S3);
+}
 
-	int colors;
+void sound(){
+	//Tetris
+		ecrobot_sound_tone(784, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(587, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(622, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(698, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(622, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(587, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(523, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(523, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(622, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(784, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(698, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(622, 208, 30);
+		systick_wait_ms(200);
+
+		ecrobot_sound_tone(587, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(587, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(622, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(698, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(784, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(622, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(523, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(523, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(523, 416, 0);			//Viertelpause, Frrequenz egal?
+		systick_wait_ms(200);
+
+		ecrobot_sound_tone(622, 208, 0);			//Achtelpause
+		systick_wait_ms(200);
+		ecrobot_sound_tone(698, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(698, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(831, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(1047, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(932, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(831, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(784, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(784, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(622, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(784, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(698, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(622, 208, 30);
+		systick_wait_ms(200);
+
+		ecrobot_sound_tone(587, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(587, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(622, 208, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(698, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(784, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(622, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(523, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(523, 416, 30);
+		systick_wait_ms(200);
+		ecrobot_sound_tone(523, 416, 0);
+		systick_wait_ms(200);
+
+	}
+
+void set() {	//Kalibrierung auf Schwarz und Weiß
+	//hier möglichst nix ändern, da es zum Glück ordentlich funzt
+	int colorb;
+	int colors;	//colors means senseless, Name ist Programm.
+	int colorw;
+	colorw = 0;	//sonst gibts Warnings
 	int i = 0;
-	colors = ecrobot_get_light_sensor(NXT_PORT_S3);
+	colors = ecrobot_get_light_sensor(NXT_PORT_S3);		//Soll ersten Fehler verhindert. colors de perfect one 4 dis job
 	systick_wait_ms(300);
 	while (i<10) {
 		colorb = ecrobot_get_light_sensor(NXT_PORT_S3);
 		i++;
 	}
-		display_int(colorb,4);
+
 	turnr();
 	systick_wait_ms(400);
 	stop();
-	int colorw;
-	colorw = 0;
 	while (i<20) {
 		colorw = ecrobot_get_light_sensor(NXT_PORT_S3);
 		i++;
 	}
+	color = (colorw + colorb)/2;		// sw-Vergleichswert für gesamten Durchlauf
+	display_int(colorb,4);				// s- und w-Werte ausgeben
 	display_int(colorw,4);
 	display_update();
 	turnl();
 	systick_wait_ms(400);
-	color = (colorw + colorb)/2;
 	stop();
-	systick_wait_ms(100);
 }
 
-int search() {
-  	int i;
-	turnr();
-  	i = 0;
-  	while (i < 20) {
-  		systick_wait_ms(20);
+int search() {				//Suche nach schwarrzer Linie
+  	int i;					//optimierbar, zB add kleineres Schwenken am Anfang -> schneller
+	turnr();				//oder spezielle Suche am Knoten, letztes turnr(zurückgehen) entfernen
+  	i = 0;					//WICHTG: großflächige Suche aber lassen, zum schwarze Kanten finden
+  	while (i < 20) {		//Schwarzkontrolle immer nach 20ms
+  		systick_wait_ms(20);	//Rechtsdrehen und suchen
   		i++;
   		if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
-  			return 1;
+  			return 1;		//= schwarz gefunden
   	}
-	turnl();
+	turnl();				//Linksdrehen und suchen
 	i = 0;
 	while (i < 40) {
 		systick_wait_ms(20);
@@ -135,7 +209,7 @@ int search() {
 		if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
 		return 1;
 	}
-	turnr();
+	turnr();				//Zurück-/Rechtsdrehen. Suche eigentlich sinnlooouuus, aber Sicherheit usw.
 	i = 0;
 	while (i < 20) {
 		systick_wait_ms(20);
@@ -146,37 +220,38 @@ int search() {
   return 0;
 }
 
-void tokenfound() {
+void tokenfound() {			//tokenfound = Token gefunden, okay?!
 	ecrobot_set_motor_speed(NXT_PORT_B, -53);
 	ecrobot_set_motor_speed(NXT_PORT_C, -50);
 	systick_wait_ms(500);
 	stop();
-	token++;
-	sound();
+	token++;				//weiterer Token gefunden
+	sound();				//Superhit des Jahrhunderts wird abgespielt
 	systick_wait_ms(3000);
 }
 
-void drive() {
+void drive() {				//fahren auf dem Strich
 	int running = 1;
 	int colort;
 	go();
 	systick_wait_ms(50);
-	//gucken ob Token da steht und obs noch schwarz ist, sonst wird gesucht
 	while(running){
 		if(ecrobot_get_touch_sensor(NXT_PORT_S1) || ecrobot_get_touch_sensor(NXT_PORT_S2)) {
-					tokenfound();
+					tokenfound();		//laufende Suche ob Token im Weg steht
 					go();  }
 		colort = ecrobot_get_light_sensor(NXT_PORT_S3);
-		if ((colort) < (color))
+		if ((colort) < (color))			//checkt ob es noch schwarz ist
 			running = 0;
 	}
-	//bei 0 ist alles weiß -> Knoten
-	int sw = search();
+	int sw = search();	//bei 0 ist alles weiß -> Knoten
 	if (sw > 0)
 		drive();
+	go();
+	turnrev(200);
+	stop();
 }
 
-void turn90 (int t) {
+void turn90 (int t) {		//Drehung um 90°...also fast
 	t = t * 285;
 	int revn;
 	revn = ecrobot_get_motor_rev(NXT_PORT_C);
@@ -193,23 +268,8 @@ void turn90 (int t) {
 
 }
 
-int knotentoken() {
-	go();			//gucken ob ein Token da steht
-	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
-	while (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (200)){
-		if(ecrobot_get_touch_sensor(NXT_PORT_S1))
-			revn = revn - 300;
-		if(ecrobot_get_touch_sensor(NXT_PORT_S2))
-			revn = revn - 300;
-	}
-	if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > 290) {
-		tokenfound();
-		return 1;
-	}
-	return 0;
-}
 
-void NESW(int s) {
+void NESW(int s) {	//passt Richtungsangaben an die absolute Richtung an
 	s = (dir + s)%4;
 	switch (s) {
 		case 0: N = 1; break;
@@ -220,7 +280,7 @@ void NESW(int s) {
 
 }
 
-void knoten() {
+void knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Richtung speichern und lässt alles in die perfekte Richtung drehen. Also ein alles in allem total mega geiles Teil hier :)  Lass uns diese Funktion Gott umtaufen.
 	ecrobot_status_monitor("Knoten");
 							//100ms = 0,9...cm
 							//5800ms = 365°
@@ -258,41 +318,39 @@ void knoten() {
 		case 6: ecrobot_status_monitor("Links u Rechts"); NESW(1); NESW(3); break;
 		case 7: ecrobot_status_monitor("ueberall Kanten"); NESW(0); NESW(1); NESW(3);
 	}
+	komset(1);
+	N = N * 0x10;
+	S = S * 0x20;
+	W = W * 0x40;
+	E = E * 0x80;
 	stop();
-	systick_wait_ms(2000);
 	display_clear(1);
-	display_int(N, 2);
-	display_int(E, 2);
-	display_int(S, 2);
-	display_int(W, 2);
-	display_update();
-	systick_wait_ms(2000);
-	//ohne was zu tun gehts nach rechts
-	switch (direct) {
-		case 0: turn90(-1); kompset(2); break;
-		case 1: turn90(1); kompset(0); break;
-		case 2: turn90(2); kompset(3); break;
-		case 3: turn90(1); kompset(0);break;
-		case 4: kompset(1); break;
-		case 5: turn90(1); kompset(0); break;
-		case 6: turn90(0); kompset(1); break;
-		case 7: turn90(2); kompset(3); break;
-	}
+	display_goto_xy(6,0);
+	display_int(N+S+W+E, 8);
+	display_update();							//ohne was zu tun gehts nach rechts
+}
+
+godi(int a) {
+	a = dir - a;		//Berechnet aus absoluter Richtung, ob er L R usw. muss
+	if ((a*a) > 6)
+		a = a * (-1/3);
+	turn90(a);
+	kompset(a);
 }
 
 TASK(OSEK_Main_Task) {
-		ecrobot_set_light_sensor_active(NXT_PORT_S3);
-		int a=0;
-		int kn = 0;
-		set();
-		while (a<10){
-			a++;
-			drive();
-			kn = knotentoken();
-			if (kn == 0)
-				knoten();
-		}
-
+	ecrobot_set_light_sensor_active(NXT_PORT_S3);
+	set();
+	drive();
+	knoten();
+	int hex;
+	switch (hex) {
+	case 0x10: hex = 0; break;
+	case 0x20: hex = 1; break;
+	case 0x40: hex = 2; break;
+	case 0x80: hex = 3; break;
+	}
+	godi(hex);		//dreht in die angegebene absolute Richtung
 
 		/*turnl();
 		int i = 1;
@@ -322,7 +380,7 @@ TASK(OSEK_Main_Task) {
 		ecrobot_status_monitor("My name is Horst");
 		stop();
 		systick_wait_ms(3000);
-		ecrobot_status_monitor("Horst Horst");
+		ecrobot_status_monitor("James Horst");
 		while(1){
 
 		}
