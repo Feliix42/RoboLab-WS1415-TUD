@@ -1,145 +1,12 @@
 #include "../h/RobolabSimClient.h"
-
-int direction = 0;
-    /* aktuelle Blickrichtung des Roboters (am Beginn N)
-     * 0 = N; 1 = O; 2 = S; 3 = W
-     *
-     * IDEE: Wenn der Roboter an die Kreuzung kommt:
-     * Biegt er RECHTS ab, erhöhe direction um 1 (mod 4).
-     * Biegt er LINKS ab, vermindere direction um 1 (mod 4). */
+#include"../h/basics.h"
 
 int token = 3;
 hpointer knownNodes = NULL;
 int nodeCount = 0;
 
-
-// Reset nodes for dijkstra
-void resetDistance(void) {
-  int i, j;
-  for(i = 0; i < X_SIZE; i++) {
-    for(j = 0; j < Y_SIZE; j++) {
-      node[i][j].distance = MAX_DISTANCE;
-      node[i][j].visitedByDijkstra = 0;
-    }
-  }
-}
-
-
-//Init nodes
-void initArray(void) {
-  int i, j, d;
-  for(i = 0; i < X_SIZE; i++) {
-    for(j = 0; j < Y_SIZE; j++) {
-      node[i][j].state = 2;
-      for (d=0;d<4;d++) node[i][j].directions[d]=0;
-    }
-  }
-  resetDistance();
-}
-
-
-//get dx/dy from direction
-void dirToXY(int direction, int *dx, int *dy)
-{
-    *dx=0;
-    *dy=0;
-    switch(direction) {
-    case 0:
-      *dy=*dy+1;
-      break;
-    case 1:
-      *dx=*dx+1;
-      break;
-    case 2:
-      *dy=*dy-1;
-      break;
-    case 3:
-      *dx=*dx-1;
-      break;
-  }
-  return;
-}
-
-
-
-void checkIntersection(int x, int y) {
-  if (node[x][y].state == 1)
-    return;
-
-  int intersection = Robot_GetIntersections();
-
-  if(intersection & NORTH) {
-    node[x][y].directions[0] = 0x01;
-    node[x][y+1].directions[2] = 1;
-    if(node[x][y+1].state == 2)
-    {
-      node[x][y+1].state = 0;
-      heap_push(x,y+1,&knownNodes);
-      nodeCount++;
-    }
-  }
-
-
-  if(intersection & EAST) {
-    node[x][y].directions[1] = 0x01;
-    node[x+1][y].directions[3] = 1;
-    if(node[x+1][y].state == 2)
-    {
-      node[x+1][y].state = 0;
-      heap_push(x+1,y,&knownNodes);
-      nodeCount++;
-    }
-  }
-
-  if(intersection & SOUTH) {
-    node[x][y].directions[2] = 0x01;
-    node[x][y-1].directions[0] = 1;
-    if(node[x][y-1].state == 2)
-    {
-      node[x][y-1].state = 0;
-      heap_push(x,y-1,&knownNodes);
-      nodeCount++;
-    }
-  }
-
-
-  if(intersection & WEST) {
-    node[x][y].directions[3] = 0x01;
-    node[x-x][y].directions[1] = 1;
-    if(node[x-1][y].state == 2)
-    {
-      node[x-1][y].state = 0;
-      heap_push(x-1,y,&knownNodes);
-      nodeCount++;
-    }
-  }
-}
-
-
-int checkNodeAvailable(int x, int y, int dir) {
-  switch(dir) {
-    case 0:
-      y++;
-      break;
-    case 1:
-      x++;
-      break;
-    case 2:
-      y--;
-      break;
-    case 3:
-      x--;
-      break;
-  }
-
-  if(node[x][y].state == 0)
-    return 1;
-  else
-    return 0;
-}
-
 // find a way from startx/y to targetx/y. If nextSteps is NULL, the robot will instantly follow this way. If not, the waypoints will be added to nextSteps.
-void go(int startx, int starty, int targetx, int targety, int simudx, int simudy,hpointer *nextSteps)
+void dijkstra(int startx, int starty, int targetx, int targety, int simudx, int simudy,hpointer *nextSteps)
 {
   int goThisWay = 0; // check nextSteps
   if (nextSteps == NULL)
@@ -257,7 +124,7 @@ int findBacktrackNode(int *ox, int *oy, hpointer *heap)
 
 // go back to start from current position x/y. instantly, if nextStep is NULL, added to nextSteps if is a pointer.
 void backToStart(int x, int y, int dx, int dy, hpointer *nextSteps) {
-  go(x,y,6,6,dx,dy,nextSteps); // 6/6 is start
+  dijkstra(x,y,6,6,dx,dy,nextSteps); // 6/6 is start
   return;
 }
 
@@ -323,7 +190,7 @@ int main(void) {
             if (findBacktrackNode(&bx,&by,&heap))
             {
                 printf("going back to %d %d\n",bx,by);
-                go(x,y,bx,by,dx,dy,&nextSteps);
+                dijkstra(x,y,bx,by,dx,dy,&nextSteps);
                 heap_pop(&x,&y,&nextSteps);
             }
             else
