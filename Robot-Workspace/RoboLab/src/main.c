@@ -349,7 +349,7 @@ int robot_move (int hex) {
 TASK(OSEK_Main_Task) {
 	ecrobot_set_light_sensor_active(NXT_PORT_S3);
 	set();
-	//brain();					// TODO von den Softis
+	brain();
 
 	ecrobot_status_monitor("My name is Horst");
 	stop();
