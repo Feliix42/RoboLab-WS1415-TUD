@@ -20,8 +20,8 @@ void ecrobot_device_terminate(void) {
 }
 
 void go() {
-	ecrobot_set_motor_speed(NXT_PORT_B, 53);
-	ecrobot_set_motor_speed(NXT_PORT_C, 50);
+	ecrobot_set_motor_speed(NXT_PORT_B, 64);
+	ecrobot_set_motor_speed(NXT_PORT_C, 60);
 	// 205 rev(C) = 10cm bei 30 speed
 	// 205 rev(C) = 10,8cm bei 60 speed
 }
@@ -33,13 +33,13 @@ void turnrev(int rev) {		//Stoppt Bewegung nach bestimmter Rad-Grad Drehung
 }
 
 void turnl() {		//Linksdrehung
-	ecrobot_set_motor_speed(NXT_PORT_B, -40);
-	ecrobot_set_motor_speed(NXT_PORT_C, 40);
+	ecrobot_set_motor_speed(NXT_PORT_B, -60);
+	ecrobot_set_motor_speed(NXT_PORT_C, 60);
 }
 
 void turnr() {		//Rechtsdrehung
-	ecrobot_set_motor_speed(NXT_PORT_B, 40);
-	ecrobot_set_motor_speed(NXT_PORT_C, -40);
+	ecrobot_set_motor_speed(NXT_PORT_B, 60);
+	ecrobot_set_motor_speed(NXT_PORT_C, -60);
 }
 
 void stop() {		//Bremse
