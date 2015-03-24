@@ -54,8 +54,7 @@ void checkIntersection(int x, int y, hpointer *knownNodes, int *nodeCount) {
   if (node[x][y].state == 1)
     return;
 
-  //int intersection = Robot_GetIntersections();      TODO
-  int intersection = NORTH;
+  int intersection = get_intersection();
 
   if(intersection & NORTH) {
     node[x][y].directions[0] = 0x01;
@@ -142,8 +141,5 @@ int Robot_Move(int x, int y)
         else direction=2;
     }
 
-
     return robot_move(direction);
-    //return Robot_Move(x,y);
-    return 0;   //   TODO
 }

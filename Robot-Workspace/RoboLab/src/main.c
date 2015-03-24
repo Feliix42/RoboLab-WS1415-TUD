@@ -1,6 +1,5 @@
 #include "../h/main.h"
 int color;		//Mittelwert Schwarz-Weiß, zum Vergleichen
-int token = 0;	//Zahl der gefundenen Token
 int dir = 0;	//aktuelle Fahrtrichtung N oder Startrichtung = 0
 int N;			//Startrichtung
 int S;			//Hinten
@@ -323,10 +322,30 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 }
 
 void godi(int a) {
+	char t[5];
+	t[0]='d';
+	t[1]='i';
+	t[2]='r';
+	t[3]=' ';
+  t[4]=(char)dir+48+5;
+  t[5]=0;
+  ecrobot_status_monitor(t);
+	systick_wait_ms(2000);
+
 	int b = a;
 	a = dir - a;		//Berechnet aus absoluter Richtung, ob er L R usw. muss
 	if ((a*a) > 6)
 		a = a * (-1/3);
+
+		t[0]='r';
+		t[1]='e';
+		t[2]='l';
+		t[3]=' ';
+	  t[4]=(char)a+48+5;
+	  t[5]=0;
+	  ecrobot_status_monitor(t);
+		systick_wait_ms(2000);
+
 	turn90(a);
 	kompset((b-dir)%4);
 }
@@ -335,14 +354,8 @@ int get_intersection () {
 	return (knoten());		//startet Kantensuche am Knoten
 }
 
-int robot_move (int hex) {
-	switch (hex) {			//rechnet die Richtung von den Softis in was richtiges
-	case 0x10: hex = 0; break;//Norden
-	case 0x80: hex = 1; break;//Ostern-right
-	case 0x20: hex = 2; break;//Süden-back
-	case 0x40: hex = 3; break;//Westen-left
-	}
-	godi(hex);		//dreht in die angegebene absolute Richtung
+int robot_move (int nothex) {
+	godi(nothex);		//dreht in die angegebene absolute Richtung
 	return move();
 }
 

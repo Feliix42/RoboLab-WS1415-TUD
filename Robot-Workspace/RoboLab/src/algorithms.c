@@ -130,7 +130,7 @@ void backToStart(int x, int y, int dx, int dy, hpointer *nextSteps) {
 void brain(void) {
   int x = 6, y = 6, driveTo, running = 1;
 
-  int dx = -6, dy = -6;
+  int dx = 0, dy = 0;
 
   initArray();
 
@@ -148,7 +148,9 @@ void brain(void) {
   while(running) {
     // printf("%d %d\n", x+dx, y+dy);       TODO
 
+    ecrobot_status_monitor("c1");
     checkIntersection(x, y, &knownNodes, &nodeCount);
+    ecrobot_status_monitor("c2");
 
     node[x][y].state = 1;
 
@@ -166,35 +168,38 @@ void brain(void) {
 
         switch(driveTo) {
           case 0:
-            // printf("Go NORTH\n");          TODO
+            ecrobot_status_monitor("Go NORTH\n");
+            systick_wait_ms(2000);
             heap_push(x,y,&heap);
             y++;
             break;
           case 1:
-            // printf("Go EAST\n");         TODO
+            ecrobot_status_monitor("Go EAST\n");
+            systick_wait_ms(2000);
             heap_push(x,y,&heap);
             x++;
             break;
           case 2:
-            // printf("Go SOUTH\n");          TODO
+            ecrobot_status_monitor("Go SOUTH\n");
+            systick_wait_ms(2000);
             heap_push(x,y,&heap);
             y--;
             break;
           case 3:
-            // printf("Go WEST\n");         TODO
+            ecrobot_status_monitor("Go WEST\n");
+            systick_wait_ms(2000);
             heap_push(x,y,&heap);
             x--;
             break;
           case 4:
             if (findBacktrackNode(&bx,&by,&heap))
             {
-                // printf("going back to %d %d\n",bx,by);     TODO
                 dijkstra(x,y,bx,by,dx,dy,&nextSteps);
                 heap_pop(&x,&y,&nextSteps);
             }
             else
             {
-                // printf("Labyrinth vollständig erkundet.\nEnde.\n");      TODO
+                ecrobot_status_monitor("discovered EVERYTHING.");
                 running = 0;
             }
             break;
@@ -208,7 +213,7 @@ void brain(void) {
         if(found == ROBOT_TOKENFOUND)
           token--;
         if(!token) {
-          // printf("found every token!\n");          TODO
+          ecrobot_status_monitor("found all tokens!");
           backToStart(x, y, dx, dy, NULL);
           running = 0;
         }
