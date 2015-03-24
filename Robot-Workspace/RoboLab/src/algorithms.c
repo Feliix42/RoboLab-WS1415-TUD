@@ -83,7 +83,7 @@ void dijkstra(int startx, int starty, int targetx, int targety, int simudx, int 
      hpointer temp = *nextSteps;
      while (temp!=NULL)
      {
-        robot_move(temp->x+simudx,temp->y+simudy); // move move move
+        Robot_Move(temp->x+simudx,temp->y+simudy); // move move move
         temp=temp->next;
      }
   }
@@ -141,7 +141,7 @@ void brain(void) {
   hpointer heap = NULL;
   hpointer nextSteps = NULL;
 
-  int found = robot_move(0,0);
+  int found = robot_move(0);
   if(found == ROBOT_TOKENFOUND)
     token--;
 
@@ -204,7 +204,7 @@ void brain(void) {
 
     if (running)
     {
-        found = robot_move(x+dx,y+dy);
+        found = Robot_Move(x+dx,y+dy);
         if(found == ROBOT_TOKENFOUND)
           token--;
         if(!token) {

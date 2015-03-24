@@ -214,14 +214,16 @@ void tokenfound() {			//tokenfound = Token gefunden, okay?!
 	systick_wait_ms(3000);
 }
 
-void drive() {				//fahren auf dem Strich
+int drive() {				//fahren auf dem Strich
 	int running = 1;
 	int colort;
+	int btokenfound=1; // ROBOT_SUCCESS
 	go();
 	systick_wait_ms(50);
 	while(running){
 		if(ecrobot_get_touch_sensor(NXT_PORT_S1) || ecrobot_get_touch_sensor(NXT_PORT_S2)) {
 					tokenfound();		//laufende Suche ob Token im Weg steht
+					btokenfound = 2; // ROBOT_TOKENFOUND
 					go();  }
 		colort = ecrobot_get_light_sensor(NXT_PORT_S3);
 		if ((colort) < (color))			//checkt ob es noch schwarz ist
@@ -230,13 +232,15 @@ void drive() {				//fahren auf dem Strich
 	int sw = search();	//bei 0 ist alles weiß -> Knoten
 	if (sw > 0)
 		drive();
+	return btokenfound;
 }
 
-void move() {
-	drive();
+int move() {
+	int btokenfound = drive();
 	go();			//Fährt auf Knoten
 	turnrev(200);
 	stop();
+	return btokenfound;
 }
 
 void turn90 (int t) {		//Drehung um 90°...also fast
@@ -321,24 +325,24 @@ void godi(int a) {
 }
 
 int get_intersection () {
-	move();
 	return (knoten());		//startet Kantensuche am Knoten
 }
 
-void robot_move (int hex) {
+int robot_move (int hex) {
 	switch (hex) {			//rechnet die Richtung von den Softis in was richtiges
 	case 0x10: hex = 0; break;//Norden
 	case 0x80: hex = 1; break;//Ostern-right
 	case 0x20: hex = 2; break;//Süden-back
 	case 0x40: hex = 3; break;//Westen-left
-	} 
+	}
 	godi(hex);		//dreht in die angegebene absolute Richtung
+	return move();
 }
 
 TASK(OSEK_Main_Task) {
 	ecrobot_set_light_sensor_active(NXT_PORT_S3);
 	set();
-	//brain();					// TO DO von den Softis
+	//brain();					// TODO von den Softis
 
 	ecrobot_status_monitor("My name is Horst");
 	stop();

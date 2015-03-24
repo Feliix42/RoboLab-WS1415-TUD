@@ -118,16 +118,16 @@ int checkNodeAvailable(int x, int y, int dir) {
 
 int lastx=6, lasty=6;
 
-int robot_move(int x, int y)
+int Robot_Move(int x, int y)
 {
     int dx=x-lastx;
     int dy=y-lasty;
-    
+
     lastx=x;
     lasty=y;
-    
+
     int direction = 0;
-    
+
     if (dx==1)
     {
         direction=1;
@@ -141,10 +141,9 @@ int robot_move(int x, int y)
         if (dy==1) direction=0;
         else direction=2;
     }
-     
 
-    //return move(direction);
+
+    return robot_move(direction);
     //return Robot_Move(x,y);
     return 0;   //   TODO
 }
-

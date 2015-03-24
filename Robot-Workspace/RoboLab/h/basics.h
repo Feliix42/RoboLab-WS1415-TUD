@@ -2,6 +2,7 @@
 #define BASICS_H_
 
 #include "heap.h"
+#include "main.h"
 
 // DEFINITIONS
 
@@ -38,6 +39,6 @@ void initArray(void);
 void dirToXY(int direction, int *dx, int *dy);
 void checkIntersection(int x, int y, hpointer *knownNodes, int *nodeCount);
 int checkNodeAvailable(int x, int y, int dir);
-int robot_move(int x, int y);
+int Robot_Move(int x, int y);
 
 #endif // BASICS_H_
