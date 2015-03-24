@@ -7,6 +7,7 @@
 #include "kernel_id.h"
 #include "ecrobot_interface.h"
 #include "algorithms.h"
+#include "orchester.h"
 
 /* add user headers here: */
 
