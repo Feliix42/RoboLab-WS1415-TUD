@@ -239,7 +239,12 @@ int drive() {				//fahren auf dem Strich
 	}
 	int sw = search();	//bei 0 ist alles weiß -> Knoten
 	if (sw > 0)
-		drive();
+	{
+		int btokenfound2 = drive();
+		if (btokenfound2==2) // ROBOT_TOKENFOUND
+			btokenfound=2;
+	}
+
 	return btokenfound;
 }
 
