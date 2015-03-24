@@ -169,25 +169,21 @@ void brain(void) {
         switch(driveTo) {
           case 0:
             ecrobot_status_monitor("Go NORTH\n");
-            systick_wait_ms(2000);
             heap_push(x,y,&heap);
             y++;
             break;
           case 1:
             ecrobot_status_monitor("Go EAST\n");
-            systick_wait_ms(2000);
             heap_push(x,y,&heap);
             x++;
             break;
           case 2:
             ecrobot_status_monitor("Go SOUTH\n");
-            systick_wait_ms(2000);
             heap_push(x,y,&heap);
             y--;
             break;
           case 3:
             ecrobot_status_monitor("Go WEST\n");
-            systick_wait_ms(2000);
             heap_push(x,y,&heap);
             x--;
             break;

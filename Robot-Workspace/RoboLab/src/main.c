@@ -322,32 +322,13 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 }
 
 void godi(int a) {
-	char t[5];
-	t[0]='d';
-	t[1]='i';
-	t[2]='r';
-	t[3]=' ';
-  t[4]=(char)dir+48+5;
-  t[5]=0;
-  ecrobot_status_monitor(t);
-	systick_wait_ms(2000);
-
-	int b = a;
+	int newdir = a;
 	a = dir - a;		//Berechnet aus absoluter Richtung, ob er L R usw. muss
-	if ((a*a) > 6)
-		a = a * (-1/3);
-
-		t[0]='r';
-		t[1]='e';
-		t[2]='l';
-		t[3]=' ';
-	  t[4]=(char)a+48+5;
-	  t[5]=0;
-	  ecrobot_status_monitor(t);
-		systick_wait_ms(2000);
+	if (a==3) a=-1;
+	if (a==-3) a=1;
 
 	turn90(a);
-	kompset((b-dir)%4);
+	dir = newdir;
 }
 
 int get_intersection () {
