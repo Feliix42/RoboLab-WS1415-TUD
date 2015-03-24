@@ -177,10 +177,17 @@ void set() {	//Kalibrierung auf Schwarz und Weiß
 }
 
 int search() {				//Suche nach schwarzer Linie
-  	int i;					//optimierbar, zB add kleineres Schwenken am Anfang -> schneller
+		turnl();				//Linksdrehen und suchen
+		int i = 0;
+		while (i < 5) {
+			systick_wait_ms(20);
+			i++;
+			if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
+			return 1;
+		}					//optimierbar, zB add kleineres Schwenken am Anfang -> schneller
 	turnr();				//oder spezielle Suche am Knoten, letztes turnr(zurückgehen) entfernen
   	i = 0;					//WICHTG: großflächige Suche aber lassen, zum schwarze Kanten finden
-  	while (i < 20) {		//Schwarzkontrolle immer nach 20ms
+  	while (i < 25) {		//Schwarzkontrolle immer nach 20ms
   		systick_wait_ms(20);	//Rechtsdrehen und suchen
   		i++;
   		if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
