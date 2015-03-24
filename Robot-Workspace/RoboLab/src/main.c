@@ -212,12 +212,14 @@ int search() {				//Suche nach schwarzer Linie
 }
 
 void tokenfound() {			//tokenfound = Token gefunden, okay?!
+	ecrobot_set_motor_speed(NXT_PORT_A, 100);
 	ecrobot_set_motor_speed(NXT_PORT_B, -53);
 	ecrobot_set_motor_speed(NXT_PORT_C, -50);
 	systick_wait_ms(500);
 	stop();
 	sound(10);				//Superhit des Jahrhunderts wird abgespielt
 	systick_wait_ms(3000);
+	ecrobot_set_motor_speed(NXT_PORT_A, 0);
 }
 
 int drive() {				//fahren auf dem Strich
