@@ -172,22 +172,18 @@ void brain(void) {
 
         switch(driveTo) {
           case 0:
-            ecrobot_status_monitor("Go NORTH\n");
             heap_push(x,y,&heap);
             y++;
             break;
           case 1:
-            ecrobot_status_monitor("Go EAST\n");
             heap_push(x,y,&heap);
             x++;
             break;
           case 2:
-            ecrobot_status_monitor("Go SOUTH\n");
             heap_push(x,y,&heap);
             y--;
             break;
           case 3:
-            ecrobot_status_monitor("Go WEST\n");
             heap_push(x,y,&heap);
             x--;
             break;
@@ -199,7 +195,10 @@ void brain(void) {
             }
             else
             {
-                ecrobot_status_monitor("discovered EVERYTHING.");
+                display_clear(1);
+                display_goto_xy(0,3);
+                display_string("Discovered EVERYTHING.");
+                display_update();
                 running = 0;
             }
             break;
@@ -213,7 +212,10 @@ void brain(void) {
         if(found == ROBOT_TOKENFOUND)
           token--;
         if(!token) {
-          ecrobot_status_monitor("found all tokens!");
+          display_clear(1);
+          display_goto_xy(0,3);
+          display_string("Found all Tokens!");
+          display_update();
           backToStart(x, y, dx, dy, NULL);
           running = 0;
         }

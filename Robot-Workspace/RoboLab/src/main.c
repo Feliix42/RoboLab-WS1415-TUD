@@ -211,7 +211,10 @@ void printDir(int x) {
 }
 
 int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Richtung speichern und lässt alles in die perfekte Richtung drehen. Also ein alles in allem total mega geiles Teil hier :)  Lass uns diese Funktion Gott umtaufen.
-	ecrobot_status_monitor("Knoten");
+	display_clear(1);
+	display_goto_xy(5,3);
+	display_string("Knoten.");
+	display_update();
 	int direct = 1 * search();	//guckt ob straight da ist
 	turnl();
 	int i = 1;
@@ -318,10 +321,15 @@ TASK(OSEK_Main_Task) {
 	set();
 	brain();
 
-	ecrobot_status_monitor("My name is Horst");
+	display_clear(1);
+	display_goto_xy(0,3);
+	display_string("My name is Horst.");
+	display_update();
 	stop();
 	systick_wait_ms(3000);
-	ecrobot_status_monitor("James Horst");
+	display_goto_xy(3,4);
+	display_string("James Horst.");
+	display_update();
 	while(1){
 
 		}
