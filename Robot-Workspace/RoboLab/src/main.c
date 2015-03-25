@@ -216,11 +216,18 @@ int knoten(int sonar[]) {		//Startet suche nach Kanten am Koten, wandelt sie um,
 	sonar[2]=8;
 	sonar[3]=9;
 
+	int sonar_local[4];
+	sonar_local[0]=0;
+	sonar_local[1]=0;
+	sonar_local[2]=0;
+	sonar_local[3]=0;
+
 	display_clear(1);
 	display_goto_xy(5,3);
 	display_string("Knoten.");
 	display_update();
 	int direct = 1 * search();	//guckt ob straight da ist
+	sonar_local[0] = ecrobot_get_sonar_sensor(NXT_PORT_S4);
 	turnl();
 	int i = 1;
 	int j = 0;			//guckt ob left da ist
@@ -231,12 +238,22 @@ int knoten(int sonar[]) {		//Startet suche nach Kanten am Koten, wandelt sie um,
 		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (350)) {
 			if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (200)) {
 				if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
+				{
 					j = 1;
+					sonar_local[3] = ecrobot_get_sonar_sensor(NXT_PORT_S4);
+				}
 			}
 		}
 	}
 	direct = direct + 2 * j;
 	direct = direct + 4 * search();	//guckt ob right da ist
+	sonar_local[1] = ecrobot_get_sonar_sensor(NXT_PORT_S4);
+
+	sonar[0] = sonar_local[0];
+	sonar[1] = sonar_local[1];
+	sonar[2] = sonar_local[2];
+	sonar[3] = sonar_local[3];
+
 	N = 0;
 	E = 0;
 	S = 0;
@@ -322,8 +339,9 @@ int robot_move (int nothex) {
 }
 
 TASK(OSEK_Main_Task) {
-	ecrobot_init_sonar_sensor(NXT_PORT_S3);
+	ecrobot_init_sonar_sensor(NXT_PORT_S4);
 	ecrobot_set_light_sensor_active(NXT_PORT_S3);
+
 	set();
 	brain();
 
@@ -336,7 +354,7 @@ TASK(OSEK_Main_Task) {
 	display_goto_xy(3,4);
 	display_string("James Horst.");
 	display_update();
-	ecrobot_term_sonar_sensor(NXT_PORT_S3);
+	ecrobot_term_sonar_sensor(NXT_PORT_S4);
 	while(1){
 
 		}
