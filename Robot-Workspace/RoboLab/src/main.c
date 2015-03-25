@@ -192,6 +192,25 @@ void NESW(int s) {	//passt Richtungsangaben an die absolute Richtung an
 
 }
 
+void printDir(int x) {
+	// vor Ausführung display_clear(1), danach update
+	// 0 Geradeaus; 1 Links; 2 Rechts
+	switch(x) {
+		case 0:
+			display_goto_xy(4,3);
+			display_string("GERADEAUS");
+			break;
+		case 1:
+			display_goto_xy(4,2);
+			display_string("LINKS");
+			break;
+		case 2:
+			display_goto_xy(4,4);
+			display_string("RECHTS");
+			break;
+	}
+}
+
 int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Richtung speichern und lässt alles in die perfekte Richtung drehen. Also ein alles in allem total mega geiles Teil hier :)  Lass uns diese Funktion Gott umtaufen.
 	ecrobot_status_monitor("Knoten");
 	int direct = 1 * search();	//guckt ob straight da ist
@@ -216,16 +235,57 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	S = 0;
 	W = 0;
 	NESW(2);   //Kante umrechnen die zurück geht
+
+	display_clear(1);
+	display_goto_xy(0,0);
+	display_string("Richtungen:");
+
 	switch (direct) {
-		case 0: ecrobot_status_monitor("haha Sackgasse"); break;
-		case 1: ecrobot_status_monitor("nur Gerade"); NESW(0); break;
-		case 2: ecrobot_status_monitor("nur Links"); NESW(3); break;
-		case 3: ecrobot_status_monitor("Links u Gerade"); NESW(3); NESW(0); break;
-		case 4: ecrobot_status_monitor("nur Rechts"); NESW(1); break;
-		case 5: ecrobot_status_monitor("Rechts u Gerade"); NESW(1); NESW(0); break;
-		case 6: ecrobot_status_monitor("Links u Rechts"); NESW(1); NESW(3); break;
-		case 7: ecrobot_status_monitor("ueberall Kanten"); NESW(0); NESW(1); NESW(3);
+		case 0:
+			display_goto_xy(3,6);
+			display_string("SACKGASSE!");
+			break;
+		case 1:
+			printDir(0);
+			NESW(0);
+			break;
+		case 2:
+			printDir(1);
+			NESW(3);
+			break;
+		case 3:
+			printDir(0);
+			printDir(1);
+			NESW(3);
+			NESW(0);
+			break;
+		case 4:
+			printDir(2);
+			NESW(1);
+			break;
+		case 5:
+			printDir(0);
+			printDir(2);
+			NESW(1);
+			NESW(0);
+			break;
+		case 6:
+			printDir(1);
+			printDir(2);
+			NESW(1);
+			NESW(3);
+			break;
+		case 7:
+			printDir(0);
+			printDir(1);
+			printDir(2);
+			NESW(0);
+			NESW(1);
+			NESW(3);
 	}
+
+	display_update();
+
 	kompset(1);
 	N = N * 0x10;
 	S = S * 0x20;

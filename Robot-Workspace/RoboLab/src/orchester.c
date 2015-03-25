@@ -1,6 +1,6 @@
 #include "../h/orchester.h"
 
-void sound(int l) {
+void sound(int l) {		//Gestamtdauer: 12,6s
 		ecrobot_sound_tone(784, 416, l);
 		systick_wait_ms(400);
 		ecrobot_sound_tone(587, 208, l);
