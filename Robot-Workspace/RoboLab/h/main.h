@@ -1,6 +1,8 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
+// INCLUDES
+
 #include <stdlib.h>
 #include "kernel.h"
 /* Will be generated: */
@@ -10,6 +12,9 @@
 /* add user headers here: */
 #include "algorithms.h"
 #include "orchester.h"
+#include "moveset.h"
+
+// FUNCTIONS
 
 int get_intersection();	//Fährt Sucht auf Knoten mögliche Kanten, gibt Hex der Knoten aus
 int robot_move(int hex);	//dreht sich in absolute Richtung

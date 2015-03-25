@@ -20,34 +20,6 @@ void ecrobot_device_initialize(void) {
 void ecrobot_device_terminate(void) {
 }
 
-void go() {
-	ecrobot_set_motor_speed(NXT_PORT_B, 64);
-	ecrobot_set_motor_speed(NXT_PORT_C, 60);
-	// 205 rev(C) = 10cm bei 30 speed
-	// 205 rev(C) = 10,8cm bei 60 speed
-}
-
-void turnrev(int rev) {		//Stoppt Bewegung nach bestimmter Rad-Grad Drehung
-	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
-	while (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (rev)){
-	}
-}
-
-void turnl() {		//Linksdrehung
-	ecrobot_set_motor_speed(NXT_PORT_B, -60);
-	ecrobot_set_motor_speed(NXT_PORT_C, 60);
-}
-
-void turnr() {		//Rechtsdrehung
-	ecrobot_set_motor_speed(NXT_PORT_B, 60);
-	ecrobot_set_motor_speed(NXT_PORT_C, -60);
-}
-
-void stop() {		//Bremse
-	ecrobot_set_motor_speed(NXT_PORT_B, 0);
-	ecrobot_set_motor_speed(NXT_PORT_C, 0);
-}
-
 void kompset(int turndir) {		//Speichert aktelle Fahrtrichtung
 	dir = (dir + turndir)%4;
 }
@@ -162,23 +134,6 @@ int move() {
 	return btokenfound;
 }
 
-void turn90 (int t) {		//Drehung um 90°...also fast
-	t = t * 285;
-	int revn;
-	revn = ecrobot_get_motor_rev(NXT_PORT_C);
-	if (t>0) {
-		turnl();
-		while (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (t)) {
-		}
-	}
-	else {
-		turnr();
-		while (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (t)) {
-		}
-	}
-
-}
-
 
 void NESW(int s) {	//passt Richtungsangaben an die absolute Richtung an
 	s = (dir + s)%4;
@@ -189,25 +144,6 @@ void NESW(int s) {	//passt Richtungsangaben an die absolute Richtung an
 		case 3: W = 1; break;
 	}
 
-}
-
-void printDir(int x) {
-	// vor Ausführung display_clear(1), danach update
-	// 0 Geradeaus; 1 Links; 2 Rechts
-	switch(x) {
-		case 0:
-			display_goto_xy(4,3);
-			display_string("GERADEAUS");
-			break;
-		case 1:
-			display_goto_xy(4,2);
-			display_string("LINKS");
-			break;
-		case 2:
-			display_goto_xy(4,4);
-			display_string("RECHTS");
-			break;
-	}
 }
 
 int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Richtung speichern und lässt alles in die perfekte Richtung drehen. Also ein alles in allem total mega geiles Teil hier :)  Lass uns diese Funktion Gott umtaufen.
