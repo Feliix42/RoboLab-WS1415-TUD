@@ -146,11 +146,7 @@ void brain(void) {
     token--;
 
   while(running) {
-    // printf("%d %d\n", x+dx, y+dy);       TODO
-
-    ecrobot_status_monitor("c1");
     checkIntersection(x, y, &knownNodes, &nodeCount);
-    ecrobot_status_monitor("c2");
 
     node[x][y].state = 1;
 
