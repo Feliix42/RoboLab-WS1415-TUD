@@ -199,7 +199,6 @@ void brain(void) {
                 display_goto_xy(0,3);
                 display_string("Discovered EVERYTHING.");
                 display_update();
-                finish(VOLUME);
                 running = 0;
             }
             break;
@@ -218,7 +217,6 @@ void brain(void) {
           display_string("Found all Tokens!");
           display_update();
           backToStart(x, y, dx, dy, NULL);
-          finish(VOLUME);
           running = 0;
         }
     }
