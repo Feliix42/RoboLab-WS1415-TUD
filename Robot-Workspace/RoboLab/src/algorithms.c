@@ -1,5 +1,4 @@
-#include "../h/RobolabSimClient.h"
-#include"../h/basics.h"
+#include "../h/algorithms.h"
 
 int token = 3;
 hpointer knownNodes = NULL;
@@ -25,7 +24,7 @@ void dijkstra(int startx, int starty, int targetx, int targety, int simudx, int 
   while(nodesRemaining>0) // there are more nodes out there
   {
       int mindistance=MAX_DISTANCE; // searching the node with shortest distance
-      int minx,miny;
+      int minx=0,miny=0;
 
       hpointer temp=knownNodes;
       while(temp != NULL) // go through the list
@@ -84,7 +83,7 @@ void dijkstra(int startx, int starty, int targetx, int targety, int simudx, int 
      hpointer temp = *nextSteps;
      while (temp!=NULL)
      {
-        robot_move(temp->x+simudx,temp->y+simudy); // move move move
+        Robot_Move(temp->x+simudx,temp->y+simudy); // move move move
         temp=temp->next;
      }
   }
@@ -128,10 +127,10 @@ void backToStart(int x, int y, int dx, int dy, hpointer *nextSteps) {
   return;
 }
 
-int main(void) {
+void brain(void) {
   int x = 6, y = 6, driveTo, running = 1;
 
-  int dx = -6, dy = -6;
+  int dx = 0, dy = 0;
 
   initArray();
 
@@ -142,13 +141,11 @@ int main(void) {
   hpointer heap = NULL;
   hpointer nextSteps = NULL;
 
-  int found = robot_move(0,0);
+  int found = robot_move(0);
   if(found == ROBOT_TOKENFOUND)
     token--;
 
   while(running) {
-    printf("%d %d\n", x+dx, y+dy);
-
     checkIntersection(x, y, &knownNodes, &nodeCount);
 
     node[x][y].state = 1;
@@ -158,44 +155,51 @@ int main(void) {
         driveTo = 4;
         int i;
         for(i = 0; i <= 3; i++) {
-          if((node[x][y].directions[i]))
-            if(checkNodeAvailable(x, y, i))
-              driveTo = i;
+          if (i != 2) // SOUTH shall be last, because of starting-edge reasons.
+            if(node[x][y].directions[i])
+              if(checkNodeAvailable(x, y, i))
+              {
+                driveTo = i;
+                break;
+              }
         }
+        if (driveTo == 4) // Didn't found one yet
+          if (node[x][y].directions[2]) // SOUTH, you can do it!
+            if(checkNodeAvailable(x, y, 2))
+              driveTo = 2;
 
         int bx,by;
 
         switch(driveTo) {
           case 0:
-            printf("Go NORTH\n");
             heap_push(x,y,&heap);
             y++;
             break;
           case 1:
-            printf("Go EAST\n");
             heap_push(x,y,&heap);
             x++;
             break;
           case 2:
-            printf("Go SOUTH\n");
             heap_push(x,y,&heap);
             y--;
             break;
           case 3:
-            printf("Go WEST\n");
             heap_push(x,y,&heap);
             x--;
             break;
           case 4:
             if (findBacktrackNode(&bx,&by,&heap))
             {
-                printf("going back to %d %d\n",bx,by);
                 dijkstra(x,y,bx,by,dx,dy,&nextSteps);
                 heap_pop(&x,&y,&nextSteps);
             }
             else
             {
-                printf("Labyrinth vollständig erkundet.\nEnde.\n");
+                display_clear(1);
+                display_goto_xy(0,3);
+                display_string("Discovered EVERYTHING.");
+                display_update();
+                finish(VOLUME);
                 running = 0;
             }
             break;
@@ -205,15 +209,19 @@ int main(void) {
 
     if (running)
     {
-        found = robot_move(x+dx,y+dy);
+        found = Robot_Move(x+dx,y+dy);
         if(found == ROBOT_TOKENFOUND)
           token--;
         if(!token) {
-          printf("found every token!\n");
+          display_clear(1);
+          display_goto_xy(0,3);
+          display_string("Found all Tokens!");
+          display_update();
           backToStart(x, y, dx, dy, NULL);
+          finish(VOLUME);
           running = 0;
         }
     }
   }
-	return EXIT_SUCCESS;
+	return;
 }

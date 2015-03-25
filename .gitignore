@@ -1,5 +1,9 @@
+Robot-Workspace/RoboLab/implementation.oil
+Robot-Workspace/RoboLab/kernel_cfg.c
 Simulation-Workspace/simulation/src/RobolabSimClient
+Robot-Workspace/RoboLab/kernel_id.h
 
+*.sh
 *.elf
 *.rxe
 *.bin
@@ -22,6 +26,7 @@ Simulation-Workspace/simulation/src/RobolabSimClient
 *.exe
 *.out
 *.app
+*.bat
 
 #################
 ## Eclipse
