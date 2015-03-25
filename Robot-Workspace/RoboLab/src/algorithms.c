@@ -159,10 +159,18 @@ void brain(void) {
         driveTo = 4;
         int i;
         for(i = 0; i <= 3; i++) {
-          if((node[x][y].directions[i]))
-            if(checkNodeAvailable(x, y, i))
-              driveTo = i;
+          if (i != 2) // SOUTH shall be last, because of starting-edge reasons.
+            if(node[x][y].directions[i])
+              if(checkNodeAvailable(x, y, i))
+              {
+                driveTo = i;
+                break;
+              }
         }
+        if (driveTo == 4) // Didn't found one yet
+          if (node[x][y].directions[2]) // SOUTH, you can do it!
+            if(checkNodeAvailable(x, y, 2))
+              driveTo = 2;
 
         int bx,by;
 
