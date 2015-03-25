@@ -1,6 +1,6 @@
 # Target specific macros
 TARGET = main
-TARGET_SOURCES = src/main.c src/algorithms.c src/heap.c src/basics.c
+TARGET_SOURCES = src/main.c src/algorithms.c src/heap.c src/basics.c src/orchester.c
 TOPPERS_OSEK_OIL_SOURCE = ./main.oil
 
 # Don't modify below part
