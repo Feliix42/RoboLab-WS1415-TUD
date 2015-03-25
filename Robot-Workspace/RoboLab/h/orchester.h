@@ -8,5 +8,6 @@
 // FUNCTIONS
 
 void sound(int l);
+void tetris(int l);
 
 #endif /* ORCHESTER_H_ */

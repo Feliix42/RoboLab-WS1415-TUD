@@ -124,8 +124,7 @@ void tokenfound() {			//tokenfound = Token gefunden, okay?!
 	ecrobot_set_motor_speed(NXT_PORT_C, -50);
 	systick_wait_ms(500);
 	stop();
-	sound(10);				//Superhit des Jahrhunderts wird abgespielt
-	systick_wait_ms(3000);
+	sound(50);				//Superhit des Jahrhunderts wird abgespielt
 	ecrobot_set_motor_speed(NXT_PORT_A, 0);
 }
 
