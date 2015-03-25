@@ -82,18 +82,18 @@ void set() {	//Kalibrierung auf Schwarz und Weiß
 	stop();
 }
 
-int search() {				//Suche nach schwarzer Linie
-		turnl();				//Linksdrehen und suchen
-		int i = 0;
-		while (i < 5) {
-			systick_wait_ms(20);
-			i++;
-			if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
-			return 1;
-		}					//optimierbar, zB add kleineres Schwenken am Anfang -> schneller
+int search(int kind) {				//Suche nach schwarzer Linie
+	turnl();				//Linksdrehen und suchen
+	int i = 0;
+	while (i < 3) {
+		systick_wait_ms(20);
+		i++;
+		if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
+		return 1;
+	}
 	turnr();				//oder spezielle Suche am Knoten, letztes turnr(zurückgehen) entfernen
   	i = 0;					//WICHTG: großflächige Suche aber lassen, zum schwarze Kanten finden
-  	while (i < 25) {		//Schwarzkontrolle immer nach 20ms
+  	while (i < 18) {		//Schwarzkontrolle immer nach 20ms
   		systick_wait_ms(20);	//Rechtsdrehen und suchen
   		i++;
   		if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
@@ -101,19 +101,21 @@ int search() {				//Suche nach schwarzer Linie
   	}
 	turnl();				//Linksdrehen und suchen
 	i = 0;
-	while (i < 40) {
+	while (i < 30) {
 		systick_wait_ms(20);
 		i++;
 		if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
 		return 1;
 	}
-	turnr();				//Zurück-/Rechtsdrehen. Suche eigentlich sinnlooouuus, aber Sicherheit usw.
-	i = 0;
-	while (i < 20) {
+	if (kind == 2) {
+		turnr();				//Zurück-/Rechtsdrehen. Suche eigentlich sinnlooouuus, aber Sicherheit usw.
+		i = 0;
+		while (i < 15) {
 		systick_wait_ms(20);
 		i++;
 		if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
 			return 1;
+		}
 	}
   return 0;
 }
@@ -143,7 +145,7 @@ int drive() {				//fahren auf dem Strich
 		if ((colort) < (color))			//checkt ob es noch schwarz ist
 			running = 0;
 	}
-	int sw = search();	//bei 0 ist alles weiß -> Knoten
+	int sw = search(2);	//bei 0 ist alles weiß -> Knoten
 	if (sw > 0)
 	{
 		int btokenfound2 = drive();
@@ -215,13 +217,13 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	display_goto_xy(5,3);
 	display_string("Knoten.");
 	display_update();
-	int direct = 1 * search();	//guckt ob straight da ist
+	int direct = 1 * search(1);	//guckt ob straight da ist
 	turnl();
 	int i = 1;
 	int j = 0;			//guckt ob left da ist
 	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
 	while (i) {
-		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (835))
+		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (720))
 			i = 0;
 		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (350)) {
 			if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (200)) {
@@ -231,7 +233,7 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 		}
 	}
 	direct = direct + 2 * j;
-	direct = direct + 4 * search();	//guckt ob right da ist
+	direct = direct + 4 * search(2);	//guckt ob right da ist
 	N = 0;
 	E = 0;
 	S = 0;
