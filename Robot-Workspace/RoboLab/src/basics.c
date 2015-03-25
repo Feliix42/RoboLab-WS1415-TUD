@@ -50,11 +50,25 @@ void dirToXY(int direction, int *dx, int *dy)
 
 
 
-void checkIntersection(int x, int y, hpointer *knownNodes, int *nodeCount) {
+int checkIntersection(int x, int y, hpointer *knownNodes, int *nodeCount) {
   if (node[x][y].state == 1)
-    return;
+    return -1;
 
-  int intersection = get_intersection();
+  int sonar[4];
+  int intersection = get_intersection(sonar);
+  display_goto_xy(0,6);
+	display_int(sonar[0],3);
+
+  display_goto_xy(4,6);
+	display_int(sonar[1],3);
+
+  display_goto_xy(8,6);
+	display_int(sonar[2],3);
+
+  display_goto_xy(12,6);
+	display_int(sonar[3],3);
+
+  int prefer=-1;
 
   if(intersection & NORTH) {
     node[x][y].directions[0] = 0x01;
@@ -101,6 +115,8 @@ void checkIntersection(int x, int y, hpointer *knownNodes, int *nodeCount) {
       (*nodeCount)++;
     }
   }
+
+  return prefer;
 }
 
 

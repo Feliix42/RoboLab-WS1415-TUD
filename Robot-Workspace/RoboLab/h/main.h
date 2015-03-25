@@ -11,7 +11,7 @@
 #include "algorithms.h"
 #include "orchester.h"
 
-int get_intersection();	//Fährt Sucht auf Knoten mögliche Kanten, gibt Hex der Knoten aus
+int get_intersection(int sonar[]);	//Fährt Sucht auf Knoten mögliche Kanten, gibt Hex der Knoten aus
 int robot_move(int hex);	//dreht sich in absolute Richtung
 							//muss nach move oder intersection kommen
 

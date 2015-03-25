@@ -210,7 +210,12 @@ void printDir(int x) {
 	}
 }
 
-int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Richtung speichern und lässt alles in die perfekte Richtung drehen. Also ein alles in allem total mega geiles Teil hier :)  Lass uns diese Funktion Gott umtaufen.
+int knoten(int sonar[]) {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Richtung speichern und lässt alles in die perfekte Richtung drehen. Also ein alles in allem total mega geiles Teil hier :)  Lass uns diese Funktion Gott umtaufen.
+	sonar[0]=6;
+	sonar[1]=7;
+	sonar[2]=8;
+	sonar[3]=9;
+
 	display_clear(1);
 	display_goto_xy(5,3);
 	display_string("Knoten.");
@@ -242,7 +247,7 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	display_goto_xy(0,0);
 	display_string("Richtungen:");
 
-	switch (direct) {
+	switch (direct) { // TODO: Bitmaske
 		case 0:
 			display_goto_xy(3,6);
 			display_string("SACKGASSE!");
@@ -307,8 +312,8 @@ void godi(int a) {
 	dir = newdir;
 }
 
-int get_intersection () {
-	return (knoten());		//startet Kantensuche am Knoten
+int get_intersection (int sonar[]) {
+	return (knoten(sonar));		//startet Kantensuche am Knoten
 }
 
 int robot_move (int nothex) {
@@ -317,6 +322,7 @@ int robot_move (int nothex) {
 }
 
 TASK(OSEK_Main_Task) {
+	ecrobot_init_sonar_sensor(NXT_PORT_S3);
 	ecrobot_set_light_sensor_active(NXT_PORT_S3);
 	set();
 	brain();
@@ -330,6 +336,7 @@ TASK(OSEK_Main_Task) {
 	display_goto_xy(3,4);
 	display_string("James Horst.");
 	display_update();
+	ecrobot_term_sonar_sensor(NXT_PORT_S3);
 	while(1){
 
 		}

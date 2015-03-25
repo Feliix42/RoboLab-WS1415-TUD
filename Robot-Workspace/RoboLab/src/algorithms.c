@@ -146,7 +146,7 @@ void brain(void) {
     token--;
 
   while(running) {
-    checkIntersection(x, y, &knownNodes, &nodeCount);
+    int prefer = checkIntersection(x, y, &knownNodes, &nodeCount);
 
     node[x][y].state = 1;
 
