@@ -23,15 +23,15 @@ void ecrobot_device_terminate(void) {
 
 // Every robot should use a little Kappa.
 void kappa() {
-	EXTERNAL_BMP_DATA(kappa);
+    EXTERNAL_BMP_DATA(kappa);
 
-  static unsigned char lcd[8*100];
-  memset(lcd, 0x00, sizeof(lcd));
+    static unsigned char lcd[8*100];
+    memset(lcd, 0x00, sizeof(lcd));
 
-  ecrobot_bmp2lcd(BMP_DATA_START(kappa), lcd, 100, 64);
-  display_clear(1);
-  display_bitmap_copy(lcd, 100, 8, 0, 0);
-  display_update();
+    ecrobot_bmp2lcd(BMP_DATA_START(kappa), lcd, 100, 64);
+    display_clear(1);
+    display_bitmap_copy(lcd, 100, 8, 0, 0);
+    display_update();
 }
 
 void kompset(int turndir) {		//Speichert aktelle Fahrtrichtung
@@ -141,7 +141,7 @@ void tokenfound() {			//tokenfound = Token gefunden, okay?!
 	ecrobot_set_motor_speed(NXT_PORT_A, 100);
 	ecrobot_set_motor_speed(NXT_PORT_B, -50);
 	ecrobot_set_motor_speed(NXT_PORT_C, -50);
-	systick_wait_ms(100);
+	systick_wait_ms(300);
 	stop();
 	kappa();
 	sound(VOLUME);				//Superhit des Jahrhunderts wird abgespielt
@@ -379,6 +379,7 @@ TASK(OSEK_Main_Task) {
 	display_goto_xy(3,4);
 	display_string("James Horst.");
 	display_update();
+    systick_wait_ms(1500);
 	systick_wait_ms(1500);
 	display_goto_xy(3,6);
 	display_string("Thanks for");
@@ -386,8 +387,27 @@ TASK(OSEK_Main_Task) {
 	display_string("driving /w me.");
 	display_update();
 	systick_wait_ms(4000);
-	kappa();
-	while(1){
 
+    EXTERNAL_BMP_DATA(kappa);
+    EXTERNAL_BMP_DATA(kappa2);
+
+    
+    static unsigned char lcd1[8*100];
+    static unsigned char lcd2[8*100];
+    memset(lcd1, 0x00, sizeof(lcd1));
+    memset(lcd2, 0x00, sizeof(lcd2));
+
+    ecrobot_bmp2lcd(BMP_DATA_START(kappa), lcd1, 100, 64);
+    ecrobot_bmp2lcd(BMP_DATA_START(kappa2), lcd2, 100, 64);
+
+	while(1){
+        display_clear(1);
+        display_bitmap_copy(lcd1, 100, 8, 0, 0);
+        display_update();
+        systick_wait_ms(50);
+        display_clear(1);
+        display_bitmap_copy(lcd2, 100, 8, 0, 0);
+        display_update();
+        systick_wait_ms(50);
 		}
 }

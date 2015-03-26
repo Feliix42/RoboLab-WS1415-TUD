@@ -139,6 +139,8 @@ void brain(void) {
 
   initArray();
 
+  node[6][5].state=1;
+
   heap_push(x,y,&knownNodes);
   nodeCount++;
 

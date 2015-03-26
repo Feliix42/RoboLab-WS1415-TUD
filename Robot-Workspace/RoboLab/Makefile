@@ -4,7 +4,8 @@ TARGET_SOURCES = src/main.c src/algorithms.c src/heap.c src/basics.c src/orchest
 TOPPERS_OSEK_OIL_SOURCE = ./main.oil
 
 BMP_SOURCES = \
-    src/kappa.bmp
+    src/kappa.bmp \
+    src/kappa2.bmp
 
 # Don't modify below part
 O_PATH ?= build
