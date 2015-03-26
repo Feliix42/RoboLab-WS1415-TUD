@@ -343,7 +343,7 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	S = S * 0x20;
 	W = W * 0x40;
 	E = E * 0x80;
-	
+
 	return (N+S+W+E);
 }
 
