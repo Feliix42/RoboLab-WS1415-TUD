@@ -194,7 +194,7 @@ int driveonline () {		//eigentlich drive_on_edge
 	while (line) {
 		daneben = ecrobot_get_light_sensor(NXT_PORT_S3) - color;	//Daneben-fahr-Wert-Berechnung
 		if ((ecrobot_get_motor_rev(NXT_PORT_C) - revn) < 450) {
-			speed = 95;
+			speed = 80;
 			if (ecrobot_get_light_sensor(NXT_PORT_S3) < (colorw + 20)){
 				turnr();
 					while (ecrobot_get_light_sensor(NXT_PORT_S3) > color) {
@@ -391,7 +391,7 @@ TASK(OSEK_Main_Task) {
     EXTERNAL_BMP_DATA(kappa);
     EXTERNAL_BMP_DATA(kappa2);
 
-    
+
     static unsigned char lcd1[8*100];
     static unsigned char lcd2[8*100];
     memset(lcd1, 0x00, sizeof(lcd1));
