@@ -6,6 +6,7 @@ int N;			//Startrichtung
 int S;			//Hinten
 int E;			//Rechts
 int W;			//Links
+int colorw;
 
 /// DO NOT DELETE THIS METHOD
 /// It is called every 1ms and e.g. can be used for implementing a
@@ -56,7 +57,6 @@ void set() {	//Kalibrierung auf Schwarz und Weiß
 	//hier möglichst nix ändern, da es zum Glück ordentlich funzt
 	int colorb;
 	int colors;	//colors means senseless, Name ist Programm.
-	int colorw;
 	colorw = 0;	//sonst gibts Warnings
 	int i = 0;
 	colors = ecrobot_get_light_sensor(NXT_PORT_S3);		//Soll ersten Fehler verhindert. colors de perfect one 4 dis job
@@ -85,7 +85,7 @@ void set() {	//Kalibrierung auf Schwarz und Weiß
 int search(int kind) {				//Suche nach schwarzer Linie
 	turnl();				//Linksdrehen und suchen
 	int i = 0;
-	while (i < 3) {
+	while (i < 5) {
 		systick_wait_ms(20);
 		i++;
 		if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
@@ -93,7 +93,7 @@ int search(int kind) {				//Suche nach schwarzer Linie
 	}
 	turnr();				//oder spezielle Suche am Knoten, letztes turnr(zurückgehen) entfernen
   	i = 0;					//WICHTG: großflächige Suche aber lassen, zum schwarze Kanten finden
-  	while (i < 18) {		//Schwarzkontrolle immer nach 20ms
+  	while (i < 20) {		//Schwarzkontrolle immer nach 20ms
   		systick_wait_ms(20);	//Rechtsdrehen und suchen
   		i++;
   		if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
@@ -120,13 +120,45 @@ int search(int kind) {				//Suche nach schwarzer Linie
   return 0;
 }
 
+int shortsearch(int kind) {
+	turnl();				//Linksdrehen und suchen
+	int i = 0;
+	while (i < 5) {
+		systick_wait_ms(20);
+		i++;
+		if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
+		return 1;
+	}
+	turnr();
+  	if (kind == 2)
+  		i = 0;
+	while (i < 10) {		//Schwarzkontrolle immer nach 20ms
+		systick_wait_ms(20);	//Rechtsdrehen und suchen
+		i++;
+		if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
+			return 1;		//= schwarz gefunden
+	}
+	turnr();
+	if (kind == 2) {
+		turnl();				//Linksdrehen und suchen
+		i = 0;
+  		while (i < 5) {
+  			systick_wait_ms(20);
+  			i++;
+  			if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
+  				return 1;
+  		}
+	}
+	return 0;
+}
+
 void tokenfound() {			//tokenfound = Token gefunden, okay?!
 	ecrobot_set_motor_speed(NXT_PORT_A, 100);
 	ecrobot_set_motor_speed(NXT_PORT_B, -53);
 	ecrobot_set_motor_speed(NXT_PORT_C, -50);
-	systick_wait_ms(500);
+	systick_wait_ms(200);
 	stop();
-	sound(10);				//Superhit des Jahrhunderts wird abgespielt
+	//sound(10);				//Superhit des Jahrhunderts wird abgespielt
 	systick_wait_ms(3000);
 	ecrobot_set_motor_speed(NXT_PORT_A, 0);
 }
@@ -157,16 +189,63 @@ int drive() {				//fahren auf dem Strich
 	return btokenfound;
 }
 
+void setonline() {			//an richtsche edge gehen
+	shortsearch(2);
+	systick_wait_ms(50);
+	//turnr();
+	//while (ecrobot_get_light_sensor(NXT_PORT_S3) > color) {
+	//}
+	stop();
+}
+
+int driveonline () {		//eigentlich drive_on_edge
+	setonline();
+	int atokenfound = 1;
+	float daneben;
+	int	equalizer;
+	int line = 1;
+	setonline();
+	int speed;
+	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
+	while (line) {
+		daneben = ecrobot_get_light_sensor(NXT_PORT_S3) - color;	//Daneben-fahr-Wert-Berechnung
+		if ((ecrobot_get_motor_rev(NXT_PORT_C) - revn) < 480) {
+			speed = 95;
+			if (ecrobot_get_light_sensor(NXT_PORT_S3) < (colorw + 20)){
+				search(2);			//zur Sicherheit, check again
+			}
+		}
+		else {
+			speed = 55;
+			if (ecrobot_get_light_sensor(NXT_PORT_S3) < (colorw + 30)){
+				if (shortsearch(2) == 0)				//zur Sicherheit, check again
+					line = 0;
+			}
+		}
+		equalizer = (int) daneben * 2/9; 			//Wie viel Geschwindigkeitsänderung
+		ecrobot_set_motor_speed(NXT_PORT_B, (speed + equalizer));		//Speedanpassung je nach Helligkeit
+		ecrobot_set_motor_speed(NXT_PORT_C, (speed - equalizer));
+		if(ecrobot_get_touch_sensor(NXT_PORT_S1) || ecrobot_get_touch_sensor(NXT_PORT_S2)) {
+			atokenfound = 2;   //laufende Suche ob Token im Weg steht
+			tokenfound();
+			setonline();
+			go();
+		}
+	}
+	return atokenfound;
+}
+
+
 int move() {
-	int btokenfound = drive();
+	int btokenfound = driveonline();
 	go();			//Fährt auf Knoten
-	turnrev(200);
+	turnrev(170);
 	stop();
 	return btokenfound;
 }
 
 void turn90 (int t) {		//Drehung um 90°...also fast
-	t = t * 285;
+	t = t * 290;
 	int revn;
 	revn = ecrobot_get_motor_rev(NXT_PORT_C);
 	if (t>0) {
@@ -197,6 +276,7 @@ void NESW(int s) {	//passt Richtungsangaben an die absolute Richtung an
 void printDir(int x) {
 	// vor Ausführung display_clear(1), danach update
 	// 0 Geradeaus; 1 Links; 2 Rechts
+	//NESW -> gleichzeitige absolute Richtungsanpassung
 	switch(x) {
 		case 0:
 			display_goto_xy(4,3);
@@ -221,7 +301,7 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	int j = 0;			//guckt ob left da ist
 	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
 	while (i) {
-		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (720))
+		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (770))
 			i = 0;
 		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (350)) {
 			if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (200)) {
@@ -237,11 +317,10 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	S = 0;
 	W = 0;
 	NESW(2);   //Kante umrechnen die zurück geht
-
+	stop();
 	display_clear(1);
 	display_goto_xy(0,0);
 	display_string("Richtungen:");
-
 	switch (direct) {
 		case 0:
 			display_goto_xy(3,6);
@@ -285,7 +364,6 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 			NESW(1);
 			NESW(3);
 	}
-
 	display_update();
 
 	kompset(1);
@@ -293,9 +371,93 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	S = S * 0x20;
 	W = W * 0x40;
 	E = E * 0x80;
-	stop();
+	systick_wait_ms(2000);
 	return (N+S+W+E);
 }
+
+int speedupknoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Richtung speichern und lässt alles in die perfekte Richtung drehen. Also ein alles in allem total mega geiles Teil hier :)  Lass uns diese Funktion Gott umtaufen.
+	int direct = 1 * search(1);	//guckt ob straight da ist
+	turnl();
+	int i = 1;
+	int j = 0;			//guckt ob left da ist
+	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
+	while (i) {
+		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > 650)
+			i = 0;
+		if (((ecrobot_get_motor_rev(NXT_PORT_C) - revn) < 350) || ((ecrobot_get_motor_rev(NXT_PORT_C) - revn) > 200)) {
+				if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))	//in dem Bereich wird nach left gesearcht
+					j = 1;
+		}
+		if (ecrobot_get_light_sensor(NXT_PORT_S3) > (color))
+			i = 0;
+	}
+	direct = direct + 2 * j;		//Linke Kante gespeichert
+	j = 0;
+	while (i) {					//Prüft ob right auftaucht
+		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > 285)
+			i = 0;
+		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < 150) {
+			if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color)) {
+				j = 1;
+				i = 0;
+			}
+		}
+	}
+	if (j == 0)
+		direct = direct + 4 * shortsearch(1);	//falls firstsearch not succesfull, look again
+	N = 0;
+	E = 0;
+	S = 0;
+	W = 0;
+	NESW(2);	//Kante umrechnen die zurück geht
+				//restliche Kanten werden in printDir() absolut umgerechnet
+	display_clear(1);
+	display_goto_xy(0,0);
+	display_string("Richtungen:");
+
+	switch (direct) {
+		case 0:
+			display_goto_xy(3,6);
+			display_string("SACKGASSE!");
+			break;
+		case 1:
+			printDir(0);
+			break;
+		case 2:
+			printDir(1);
+			break;
+		case 3:
+			printDir(0);
+			printDir(1);
+			break;
+		case 4:
+			printDir(2);
+			NESW(1);
+			break;
+		case 5:
+			printDir(0);
+			printDir(2);
+			break;
+		case 6:
+			printDir(1);
+			printDir(2);
+			break;
+		case 7:
+			printDir(0);
+			printDir(1);
+			printDir(2);
+	}
+	display_update();
+
+	kompset(1);		//nach 270° Knotenerkundungsdrehung Kompassaktualisierung
+	N = N * 0x10;
+	S = S * 0x20;
+	W = W * 0x40;
+	E = E * 0x80;
+	stop();
+	return (N+S+W+E);	//übergibt brain() alle möglichen Kantenrichtungen
+}
+
 
 void godi(int a) {
 	int newdir = a;
@@ -320,7 +482,6 @@ TASK(OSEK_Main_Task) {
 	ecrobot_set_light_sensor_active(NXT_PORT_S3);
 	set();
 	brain();
-
 	ecrobot_status_monitor("My name is Horst");
 	stop();
 	systick_wait_ms(3000);
