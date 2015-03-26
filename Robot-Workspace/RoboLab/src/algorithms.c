@@ -128,6 +128,11 @@ void backToStart(int x, int y, int dx, int dy, hpointer *nextSteps) {
 }
 
 void brain(void) {
+  token = 3;
+  knownNodes = NULL;
+  nodeCount = 0;
+
+
   int x = 6, y = 6, driveTo, running = 1;
 
   int dx = 0, dy = 0;
