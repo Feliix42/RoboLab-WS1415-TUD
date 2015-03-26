@@ -10,7 +10,26 @@ int W;			//Links
 /// DO NOT DELETE THIS METHOD
 /// It is called every 1ms and e.g. can be used for implementing a
 /// real time counter / clock.
+int s=0;
+int sonartokenfound = 0;
 void user_1ms_isr_type2(void) {
+		if (s==0)
+		{
+			int dist = ecrobot_get_sonar_sensor(NXT_PORT_S4);
+
+			if (dist>20 && dist<30)
+					sonartokenfound = 1;
+
+			display_clear(1);
+			display_goto_xy(0,3);
+			display_int(dist,3);
+			display_update();
+
+			systick_wait_ms(50);
+		}
+
+		s++;
+		s=s%50;
 }
 
 void ecrobot_device_initialize(void) {
@@ -227,7 +246,7 @@ int knoten(int sonar[]) {		//Startet suche nach Kanten am Koten, wandelt sie um,
 	display_string("Knoten.");
 	display_update();
 	int direct = 1 * search();	//guckt ob straight da ist
-	sonar_local[0] = ecrobot_get_sonar_sensor(NXT_PORT_S4);
+
 	turnl();
 	int i = 1;
 	int j = 0;			//guckt ob left da ist
@@ -240,14 +259,12 @@ int knoten(int sonar[]) {		//Startet suche nach Kanten am Koten, wandelt sie um,
 				if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
 				{
 					j = 1;
-					sonar_local[3] = ecrobot_get_sonar_sensor(NXT_PORT_S4);
 				}
 			}
 		}
 	}
 	direct = direct + 2 * j;
 	direct = direct + 4 * search();	//guckt ob right da ist
-	sonar_local[1] = ecrobot_get_sonar_sensor(NXT_PORT_S4);
 
 	sonar[0] = sonar_local[0];
 	sonar[1] = sonar_local[1];
