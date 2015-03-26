@@ -340,6 +340,7 @@ int robot_move (int nothex) {
 
 TASK(OSEK_Main_Task) {
 	ecrobot_set_light_sensor_active(NXT_PORT_S3);
+    dir=0;
 	set();
 	brain();
 
