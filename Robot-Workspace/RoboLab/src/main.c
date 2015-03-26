@@ -20,10 +20,11 @@ void ecrobot_device_initialize(void) {
 void ecrobot_device_terminate(void) {
 }
 
+// Every robot should use a little Kappa.
 void kappa() {
 	EXTERNAL_BMP_DATA(kappa);
 
-  static U8 lcd[8*100];
+  static unsigned char lcd[8*100];
   memset(lcd, 0x00, sizeof(lcd));
 
   ecrobot_bmp2lcd(BMP_DATA_START(kappa), lcd, 100, 64);
@@ -186,6 +187,8 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	S = 0;
 	W = 0;
 	NESW(2);   //Kante umrechnen die zurück geht
+
+	//gefundene Richtungen werden
 
 	display_clear(1);
 	display_goto_xy(0,0);
