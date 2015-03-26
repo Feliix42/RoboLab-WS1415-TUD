@@ -289,21 +289,24 @@ TASK(OSEK_Main_Task) {
 	display_string("driving /w me.");
 	display_update();
 	systick_wait_ms(4000);
-    
+
     EXTERNAL_BMP_DATA(kappa);
     EXTERNAL_BMP_DATA(kappa2);
+
+    
+    static unsigned char lcd1[8*100];
+    static unsigned char lcd2[8*100];
+    memset(lcd1, 0x00, sizeof(lcd1));
+    memset(lcd2, 0x00, sizeof(lcd2));
+
+    ecrobot_bmp2lcd(BMP_DATA_START(kappa), lcd1, 100, 64);
+    ecrobot_bmp2lcd(BMP_DATA_START(kappa2), lcd2, 100, 64);
+
 	while(1){
-        static unsigned char lcd1[8*100];
-        static unsigned char lcd2[8*100];
-        memset(lcd, 0x00, sizeof(lcd1));
-        memset(lcd, 0x00, sizeof(lcd2));
-        
-        ecrobot_bmp2lcd(BMP_DATA_START(kappa), lcd1, 100, 64);
         display_clear(1);
         display_bitmap_copy(lcd1, 100, 8, 0, 0);
         display_update();
         systick_wait_ms(50);
-        ecrobot_bmp2lcd(BMP_DATA_START(kappa2), lcd2, 100, 64);
         display_clear(1);
         display_bitmap_copy(lcd2, 100, 8, 0, 0);
         display_update();
