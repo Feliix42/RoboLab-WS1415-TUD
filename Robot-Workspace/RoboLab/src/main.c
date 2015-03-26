@@ -193,21 +193,24 @@ int driveonline () {		//eigentlich drive_on_edge
 	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
 	while (line) {
 		daneben = ecrobot_get_light_sensor(NXT_PORT_S3) - color;	//Daneben-fahr-Wert-Berechnung
-		if ((ecrobot_get_motor_rev(NXT_PORT_C) - revn) < 480) {
+		if ((ecrobot_get_motor_rev(NXT_PORT_C) - revn) < 450) {
 			speed = 95;
 			if (ecrobot_get_light_sensor(NXT_PORT_S3) < (colorw + 20)){
+				turnr();
+					while (ecrobot_get_light_sensor(NXT_PORT_S3) > color) {
+					}
 				if (shortsearch(2) == 0)		//zur Sicherheit, check again
 					search(2);
 			}
 		}
 		else {
-			speed = 55;
+			speed = 60;
 			if (ecrobot_get_light_sensor(NXT_PORT_S3) < (colorw + 30)){
 				if (shortsearch(2) == 0)				//zur Sicherheit, check again
 					line = 0;
 			}
 		}
-		equalizer = (int) daneben * 2/9; 			//Wie viel Geschwindigkeitsänderung
+		equalizer = (int) daneben * 1/3; 			//Wie viel Geschwindigkeitsänderung
 		ecrobot_set_motor_speed(NXT_PORT_B, (speed + equalizer));		//Speedanpassung je nach Helligkeit
 		ecrobot_set_motor_speed(NXT_PORT_C, (speed - equalizer));
 		if(ecrobot_get_touch_sensor(NXT_PORT_S1) || ecrobot_get_touch_sensor(NXT_PORT_S2)) {
@@ -224,7 +227,7 @@ int driveonline () {		//eigentlich drive_on_edge
 int move() {
 	int btokenfound = driveonline();
 	go();			//Fährt auf Knoten
-	turnrev(170);
+	turnrev(200);
 	stop();
 	return btokenfound;
 }
@@ -252,17 +255,33 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	int j = 0;			//guckt ob left da ist
 	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
 	while (i) {
-		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (790))
+		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (580))
 			i = 0;
-		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (350)) {
-			if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (150)) {
+		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (350) && ((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (50)) {
 				if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
 					j = 1;
-			}
+		}
+		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (450)) {
+			if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
+				i = 0;
 		}
 	}
 	direct = direct + 2 * j;
-	direct = direct + 4 * search(2);	//guckt ob right da ist
+	j=0;
+	i=1;
+	revn = ecrobot_get_motor_rev(NXT_PORT_C);
+	while (i) {
+		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (270))
+			i = 0;
+		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (150)) {
+				if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
+					j = 1;
+		}
+	}
+	if (j==0)
+		direct = direct + 4 * search(2);	//guckt ob right da ist
+	else
+		direct = direct + 4 * j;
 	N = 0;
 	E = 0;
 	S = 0;
@@ -359,7 +378,8 @@ TASK(OSEK_Main_Task) {
 	systick_wait_ms(1000);
 	display_goto_xy(3,4);
 	display_string("James Horst.");
-	display_update(1500);
+	display_update();
+	systick_wait_ms(1500);
 	display_goto_xy(3,6);
 	display_string("Thanks for");
 	display_goto_xy(1,7);

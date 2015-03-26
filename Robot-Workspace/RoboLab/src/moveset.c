@@ -29,7 +29,7 @@ void stop() {		//Bremse
 }
 
 void turn90 (int t) {		//Drehung um 90°...also fast
-	t = t * 260;
+	t = t * 280;
 	int revn;
 	revn = ecrobot_get_motor_rev(NXT_PORT_C);
 	if (t>0) {

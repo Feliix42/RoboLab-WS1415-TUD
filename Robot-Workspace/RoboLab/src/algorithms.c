@@ -222,6 +222,7 @@ void brain(void) {
           display_goto_xy(0,3);
           display_string("Found all Tokens!");
           display_update();
+          checkIntersection(x, y, &knownNodes, &nodeCount);
           backToStart(x, y, dx, dy, NULL);
           finish(VOLUME);
           running = 0;
