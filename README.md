@@ -14,7 +14,7 @@ If you want to use the Source Code provided in this repo on your NXT, follow the
 
 4. Extract the files from the archive, rename the folder `workspace_robot` to `Robot-Workspace` and rename the folder `example` inside to `RoboLab`.
 
-5. Now copy this folder in the Repo and pull it again to overwrite the example files.
+5. Now copy this folder in the Repo and do `git checkout -- .` to discard all changes made during the copying process.
 
 6. **You're done!**
 
@@ -29,7 +29,7 @@ If you want to run the Simulation, follow these steps:
 
 4. Extract the files from the archive, rename the folder `workspace_simulation` to `Simulation-Workspace`.
 
-5. Now copy this folder in the Repo and pull it again to overwrite the example files.
+5. Now copy this folder in the Repo and `git checkout -- .` to discard all changes made during the copying process.
 
 6. **You're done!**
 
