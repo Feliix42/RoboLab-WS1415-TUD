@@ -20,6 +20,18 @@ void ecrobot_device_initialize(void) {
 void ecrobot_device_terminate(void) {
 }
 
+void kappa() {
+	EXTERNAL_BMP_DATA(kappa);
+
+  static U8 lcd[8*100];
+  memset(lcd, 0x00, sizeof(lcd));
+
+  ecrobot_bmp2lcd(BMP_DATA_START(kappa), lcd, 100, 64);
+  display_clear(1);
+  display_bitmap_copy(lcd, 100, 8, 0, 0);
+  display_update();
+}
+
 void kompset(int turndir) {		//Speichert aktelle Fahrtrichtung
 	dir = (dir + turndir)%4;
 }
@@ -96,6 +108,7 @@ void tokenfound() {			//tokenfound = Token gefunden, okay?!
 	ecrobot_set_motor_speed(NXT_PORT_C, -50);
 	systick_wait_ms(500);
 	stop();
+	kappa();
 	sound(VOLUME);				//Superhit des Jahrhunderts wird abgespielt
 	ecrobot_set_motor_speed(NXT_PORT_A, 0);
 }

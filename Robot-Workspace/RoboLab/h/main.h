@@ -4,6 +4,7 @@
 // INCLUDES
 
 #include <stdlib.h>
+#include <string.h>
 #include "kernel.h"
 /* Will be generated: */
 #include "kernel_id.h"
