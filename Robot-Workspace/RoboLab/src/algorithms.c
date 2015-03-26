@@ -131,6 +131,8 @@ void brain(void) {
   int x = 6, y = 6, driveTo, running = 1;
 
   int dx = 0, dy = 0;
+    
+    node[6][5].state = 1;
 
   initArray();
 
