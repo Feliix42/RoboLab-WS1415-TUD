@@ -1,7 +1,11 @@
 # Target specific macros
 TARGET = main
-TARGET_SOURCES = src/main.c src/algorithms.c src/heap.c src/basics.c src/orchester.c
+TARGET_SOURCES = src/main.c src/algorithms.c src/heap.c src/basics.c src/orchester.c src/moveset.c
 TOPPERS_OSEK_OIL_SOURCE = ./main.oil
+
+BMP_SOURCES = \
+    src/kappa.bmp \
+    src/kappa2.bmp
 
 # Don't modify below part
 O_PATH ?= build
@@ -14,6 +18,3 @@ else
 	INC=/cygdrive/C/cygwin/nxtOSEK/toppers_osek/kernel
 	include /cygdrive/C/cygwin/nxtOSEK/ecrobot/ecrobot.mak
 endif
-
-
-
