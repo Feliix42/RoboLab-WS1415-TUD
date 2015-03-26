@@ -21,32 +21,16 @@ void ecrobot_device_initialize(void) {
 void ecrobot_device_terminate(void) {
 }
 
-void go() {
-	ecrobot_set_motor_speed(NXT_PORT_B, 64);
-	ecrobot_set_motor_speed(NXT_PORT_C, 60);
-	// 205 rev(C) = 10cm bei 30 speed
-	// 205 rev(C) = 10,8cm bei 60 speed
-}
+void kappa() {
+	EXTERNAL_BMP_DATA(kappa);
 
-void turnrev(int rev) {		//Stoppt Bewegung nach bestimmter Rad-Grad Drehung
-	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
-	while (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (rev)){
-	}
-}
+  static U8 lcd[8*100];
+  memset(lcd, 0x00, sizeof(lcd));
 
-void turnl() {		//Linksdrehung
-	ecrobot_set_motor_speed(NXT_PORT_B, -60);
-	ecrobot_set_motor_speed(NXT_PORT_C, 60);
-}
-
-void turnr() {		//Rechtsdrehung
-	ecrobot_set_motor_speed(NXT_PORT_B, 60);
-	ecrobot_set_motor_speed(NXT_PORT_C, -60);
-}
-
-void stop() {		//Bremse
-	ecrobot_set_motor_speed(NXT_PORT_B, 0);
-	ecrobot_set_motor_speed(NXT_PORT_C, 0);
+  ecrobot_bmp2lcd(BMP_DATA_START(kappa), lcd, 100, 64);
+  display_clear(1);
+  display_bitmap_copy(lcd, 100, 8, 0, 0);
+  display_update();
 }
 
 void kompset(int turndir) {		//Speichert aktelle Fahrtrichtung
@@ -82,15 +66,15 @@ void set() {	//Kalibrierung auf Schwarz und Weiß
 	stop();
 }
 
-int search(int kind) {				//Suche nach schwarzer Linie
-	turnl();				//Linksdrehen und suchen
-	int i = 0;
+int search() {				//Suche nach schwarzer Linie
+		turnl();				//Linksdrehen und suchen
+		int i = 0;
 	while (i < 5) {
-		systick_wait_ms(20);
-		i++;
-		if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
-		return 1;
-	}
+			systick_wait_ms(20);
+			i++;
+			if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
+			return 1;
+		}					//optimierbar, zB add kleineres Schwenken am Anfang -> schneller
 	turnr();				//oder spezielle Suche am Knoten, letztes turnr(zurückgehen) entfernen
   	i = 0;					//WICHTG: großflächige Suche aber lassen, zum schwarze Kanten finden
   	while (i < 20) {		//Schwarzkontrolle immer nach 20ms
@@ -158,8 +142,8 @@ void tokenfound() {			//tokenfound = Token gefunden, okay?!
 	ecrobot_set_motor_speed(NXT_PORT_C, -50);
 	systick_wait_ms(200);
 	stop();
-	//sound(10);				//Superhit des Jahrhunderts wird abgespielt
-	systick_wait_ms(3000);
+	kappa();
+	sound(VOLUME);				//Superhit des Jahrhunderts wird abgespielt
 	ecrobot_set_motor_speed(NXT_PORT_A, 0);
 }
 
@@ -244,23 +228,6 @@ int move() {
 	return btokenfound;
 }
 
-void turn90 (int t) {		//Drehung um 90°...also fast
-	t = t * 290;
-	int revn;
-	revn = ecrobot_get_motor_rev(NXT_PORT_C);
-	if (t>0) {
-		turnl();
-		while (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (t)) {
-		}
-	}
-	else {
-		turnr();
-		while (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (t)) {
-		}
-	}
-
-}
-
 
 void NESW(int s) {	//passt Richtungsangaben an die absolute Richtung an
 	s = (dir + s)%4;
@@ -273,29 +240,12 @@ void NESW(int s) {	//passt Richtungsangaben an die absolute Richtung an
 
 }
 
-void printDir(int x) {
-	// vor Ausführung display_clear(1), danach update
-	// 0 Geradeaus; 1 Links; 2 Rechts
-	//NESW -> gleichzeitige absolute Richtungsanpassung
-	switch(x) {
-		case 0:
-			display_goto_xy(4,3);
-			display_string("GERADEAUS");
-			break;
-		case 1:
-			display_goto_xy(4,2);
-			display_string("LINKS");
-			break;
-		case 2:
-			display_goto_xy(4,4);
-			display_string("RECHTS");
-			break;
-	}
-}
-
 int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Richtung speichern und lässt alles in die perfekte Richtung drehen. Also ein alles in allem total mega geiles Teil hier :)  Lass uns diese Funktion Gott umtaufen.
-	ecrobot_status_monitor("Knoten");
-	int direct = 1 * search(1);	//guckt ob straight da ist
+	display_clear(1);
+	display_goto_xy(5,3);
+	display_string("Knoten.");
+	display_update();
+	int direct = 1 * search();	//guckt ob straight da ist
 	turnl();
 	int i = 1;
 	int j = 0;			//guckt ob left da ist
@@ -371,93 +321,9 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	S = S * 0x20;
 	W = W * 0x40;
 	E = E * 0x80;
-	systick_wait_ms(2000);
+	
 	return (N+S+W+E);
 }
-
-int speedupknoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Richtung speichern und lässt alles in die perfekte Richtung drehen. Also ein alles in allem total mega geiles Teil hier :)  Lass uns diese Funktion Gott umtaufen.
-	int direct = 1 * search(1);	//guckt ob straight da ist
-	turnl();
-	int i = 1;
-	int j = 0;			//guckt ob left da ist
-	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
-	while (i) {
-		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > 650)
-			i = 0;
-		if (((ecrobot_get_motor_rev(NXT_PORT_C) - revn) < 350) || ((ecrobot_get_motor_rev(NXT_PORT_C) - revn) > 200)) {
-				if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))	//in dem Bereich wird nach left gesearcht
-					j = 1;
-		}
-		if (ecrobot_get_light_sensor(NXT_PORT_S3) > (color))
-			i = 0;
-	}
-	direct = direct + 2 * j;		//Linke Kante gespeichert
-	j = 0;
-	while (i) {					//Prüft ob right auftaucht
-		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > 285)
-			i = 0;
-		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < 150) {
-			if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color)) {
-				j = 1;
-				i = 0;
-			}
-		}
-	}
-	if (j == 0)
-		direct = direct + 4 * shortsearch(1);	//falls firstsearch not succesfull, look again
-	N = 0;
-	E = 0;
-	S = 0;
-	W = 0;
-	NESW(2);	//Kante umrechnen die zurück geht
-				//restliche Kanten werden in printDir() absolut umgerechnet
-	display_clear(1);
-	display_goto_xy(0,0);
-	display_string("Richtungen:");
-
-	switch (direct) {
-		case 0:
-			display_goto_xy(3,6);
-			display_string("SACKGASSE!");
-			break;
-		case 1:
-			printDir(0);
-			break;
-		case 2:
-			printDir(1);
-			break;
-		case 3:
-			printDir(0);
-			printDir(1);
-			break;
-		case 4:
-			printDir(2);
-			NESW(1);
-			break;
-		case 5:
-			printDir(0);
-			printDir(2);
-			break;
-		case 6:
-			printDir(1);
-			printDir(2);
-			break;
-		case 7:
-			printDir(0);
-			printDir(1);
-			printDir(2);
-	}
-	display_update();
-
-	kompset(1);		//nach 270° Knotenerkundungsdrehung Kompassaktualisierung
-	N = N * 0x10;
-	S = S * 0x20;
-	W = W * 0x40;
-	E = E * 0x80;
-	stop();
-	return (N+S+W+E);	//übergibt brain() alle möglichen Kantenrichtungen
-}
-
 
 void godi(int a) {
 	int newdir = a;
@@ -482,10 +348,15 @@ TASK(OSEK_Main_Task) {
 	ecrobot_set_light_sensor_active(NXT_PORT_S3);
 	set();
 	brain();
-	ecrobot_status_monitor("My name is Horst");
+	display_clear(1);
+	display_goto_xy(0,3);
+	display_string("My name is Horst.");
+	display_update();
 	stop();
 	systick_wait_ms(3000);
-	ecrobot_status_monitor("James Horst");
+	display_goto_xy(3,4);
+	display_string("James Horst.");
+	display_update();
 	while(1){
 
 		}

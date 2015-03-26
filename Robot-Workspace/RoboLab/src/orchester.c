@@ -1,6 +1,20 @@
 #include "../h/orchester.h"
 
-void sound(int l) {		//Gestamtdauer: 12,6s
+void finish(int l)
+{
+	ecrobot_sound_tone(220, 1000, l);
+	systick_wait_ms(1000);
+	ecrobot_sound_tone(220, 0, 0);
+}
+
+void sound(int l) {		//Gestamtdauer: 10.0000s
+	ecrobot_sound_tone(220, 1000, l);
+	systick_wait_ms(1000);
+	ecrobot_sound_tone(220, 0, 0);
+	systick_wait_ms(8500);
+}
+
+void tetris(int l) {		//Gestamtdauer: 12,6s
 		ecrobot_sound_tone(784, 416, l);
 		systick_wait_ms(400);
 		ecrobot_sound_tone(587, 208, l);
