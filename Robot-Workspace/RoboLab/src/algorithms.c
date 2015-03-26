@@ -174,18 +174,30 @@ void brain(void) {
 
         switch(driveTo) {
           case 0:
+        	display_goto_xy(0,2);
+        	display_string("Go North.");
+		    display_update();
             heap_push(x,y,&heap);
             y++;
             break;
           case 1:
+        	display_goto_xy(0,2);
+        	display_string("Go East.");
+        	display_update();
             heap_push(x,y,&heap);
             x++;
             break;
           case 2:
+        	display_goto_xy(0,2);
+        	display_string("Go South.");
+        	display_update();
             heap_push(x,y,&heap);
             y--;
             break;
           case 3:
+        	display_goto_xy(0,2);
+        	display_string("Go West.");
+        	display_update();
             heap_push(x,y,&heap);
             x--;
             break;
