@@ -29,6 +29,12 @@ Robot-Workspace/RoboLab/kernel_id.h
 *.bat
 
 #################
+## XCode
+#################
+
+*.xcworkspace
+
+#################
 ## Eclipse
 #################
 
