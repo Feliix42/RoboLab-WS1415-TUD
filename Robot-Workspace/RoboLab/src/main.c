@@ -324,7 +324,7 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	S = S * 0x20;
 	W = W * 0x40;
 	E = E * 0x80;
-	
+
 	return (N+S+W+E);
 }
 
@@ -359,7 +359,8 @@ TASK(OSEK_Main_Task) {
 	systick_wait_ms(1000);
 	display_goto_xy(3,4);
 	display_string("James Horst.");
-	display_update(1500);
+	display_update();
+	systick_wait_ms(1500);
 	display_goto_xy(3,6);
 	display_string("Thanks for");
 	display_goto_xy(1,7);
