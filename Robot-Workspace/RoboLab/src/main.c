@@ -21,6 +21,7 @@ void ecrobot_device_initialize(void) {
 void ecrobot_device_terminate(void) {
 }
 
+// Every robot should use a little Kappa.
 void kappa() {
 	EXTERNAL_BMP_DATA(kappa);
 
@@ -268,6 +269,8 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	W = 0;
 	NESW(2);   //Kante umrechnen die zurück geht
 	stop();
+	//gefundene Richtungen werden
+
 	display_clear(1);
 	display_goto_xy(0,0);
 	display_string("Richtungen:");
@@ -353,10 +356,17 @@ TASK(OSEK_Main_Task) {
 	display_string("My name is Horst.");
 	display_update();
 	stop();
-	systick_wait_ms(3000);
+	systick_wait_ms(1000);
 	display_goto_xy(3,4);
 	display_string("James Horst.");
+	display_update(1500);
+	display_goto_xy(3,6);
+	display_string("Thanks for");
+	display_goto_xy(1,7);
+	display_string("driving /w me.");
 	display_update();
+	systick_wait_ms(4000);
+	kappa();
 	while(1){
 
 		}
