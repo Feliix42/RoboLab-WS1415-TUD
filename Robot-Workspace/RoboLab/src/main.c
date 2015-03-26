@@ -22,15 +22,15 @@ void ecrobot_device_terminate(void) {
 
 // Every robot should use a little Kappa.
 void kappa() {
-	EXTERNAL_BMP_DATA(kappa);
+    EXTERNAL_BMP_DATA(kappa);
 
-  static unsigned char lcd[8*100];
-  memset(lcd, 0x00, sizeof(lcd));
+    static unsigned char lcd[8*100];
+    memset(lcd, 0x00, sizeof(lcd));
 
-  ecrobot_bmp2lcd(BMP_DATA_START(kappa), lcd, 100, 64);
-  display_clear(1);
-  display_bitmap_copy(lcd, 100, 8, 0, 0);
-  display_update();
+    ecrobot_bmp2lcd(BMP_DATA_START(kappa), lcd, 100, 64);
+    display_clear(1);
+    display_bitmap_copy(lcd, 100, 8, 0, 0);
+    display_update();
 }
 
 void kompset(int turndir) {		//Speichert aktelle Fahrtrichtung
@@ -281,15 +281,32 @@ TASK(OSEK_Main_Task) {
 	systick_wait_ms(1000);
 	display_goto_xy(3,4);
 	display_string("James Horst.");
-	display_update(1500);
+	display_update();
+    systick_wait_ms(1500);
 	display_goto_xy(3,6);
 	display_string("Thanks for");
 	display_goto_xy(1,7);
 	display_string("driving /w me.");
 	display_update();
 	systick_wait_ms(4000);
-	kappa();
+    
+    EXTERNAL_BMP_DATA(kappa);
+    EXTERNAL_BMP_DATA(kappa2);
 	while(1){
-
+        static unsigned char lcd1[8*100];
+        static unsigned char lcd2[8*100];
+        memset(lcd, 0x00, sizeof(lcd1));
+        memset(lcd, 0x00, sizeof(lcd2));
+        
+        ecrobot_bmp2lcd(BMP_DATA_START(kappa), lcd1, 100, 64);
+        display_clear(1);
+        display_bitmap_copy(lcd1, 100, 8, 0, 0);
+        display_update();
+        systick_wait_ms(50);
+        ecrobot_bmp2lcd(BMP_DATA_START(kappa2), lcd2, 100, 64);
+        display_clear(1);
+        display_bitmap_copy(lcd2, 100, 8, 0, 0);
+        display_update();
+        systick_wait_ms(50);
 		}
 }
