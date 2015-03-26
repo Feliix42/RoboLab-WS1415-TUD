@@ -24,7 +24,7 @@ void ecrobot_device_terminate(void) {
 void kappa() {
 	EXTERNAL_BMP_DATA(kappa);
 
-  static U8 lcd[8*100];
+  static unsigned char lcd[8*100];
   memset(lcd, 0x00, sizeof(lcd));
 
   ecrobot_bmp2lcd(BMP_DATA_START(kappa), lcd, 100, 64);
@@ -66,7 +66,7 @@ void set() {	//Kalibrierung auf Schwarz und Weiß
 	stop();
 }
 
-int search() {				//Suche nach schwarzer Linie
+int search(int kind) {				//Suche nach schwarzer Linie
 		turnl();				//Linksdrehen und suchen
 		int i = 0;
 	while (i < 5) {
@@ -138,15 +138,15 @@ int shortsearch(int kind) {
 
 void tokenfound() {			//tokenfound = Token gefunden, okay?!
 	ecrobot_set_motor_speed(NXT_PORT_A, 100);
-	ecrobot_set_motor_speed(NXT_PORT_B, -53);
+	ecrobot_set_motor_speed(NXT_PORT_B, -50);
 	ecrobot_set_motor_speed(NXT_PORT_C, -50);
-	systick_wait_ms(200);
+	systick_wait_ms(100);
 	stop();
 	kappa();
 	sound(VOLUME);				//Superhit des Jahrhunderts wird abgespielt
 	ecrobot_set_motor_speed(NXT_PORT_A, 0);
 }
-
+/*
 int drive() {				//fahren auf dem Strich
 	int running = 1;
 	int colort;
@@ -172,10 +172,9 @@ int drive() {				//fahren auf dem Strich
 
 	return btokenfound;
 }
-
+*/
 void setonline() {			//an richtsche edge gehen
-	shortsearch(2);
-	systick_wait_ms(50);
+	search(2);
 	//turnr();
 	//while (ecrobot_get_light_sensor(NXT_PORT_S3) > color) {
 	//}
@@ -196,7 +195,8 @@ int driveonline () {		//eigentlich drive_on_edge
 		if ((ecrobot_get_motor_rev(NXT_PORT_C) - revn) < 480) {
 			speed = 95;
 			if (ecrobot_get_light_sensor(NXT_PORT_S3) < (colorw + 20)){
-				search(2);			//zur Sicherheit, check again
+				if (shortsearch(2) == 0)		//zur Sicherheit, check again
+					search(2);
 			}
 		}
 		else {
@@ -245,16 +245,16 @@ int knoten() {		//Startet suche nach Kanten am Koten, wandelt sie um, lässt Ric
 	display_goto_xy(5,3);
 	display_string("Knoten.");
 	display_update();
-	int direct = 1 * search();	//guckt ob straight da ist
+	int direct = 1 * search(1);	//guckt ob straight da ist
 	turnl();
 	int i = 1;
 	int j = 0;			//guckt ob left da ist
 	int revn = ecrobot_get_motor_rev(NXT_PORT_C);
 	while (i) {
-		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (770))
+		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (790))
 			i = 0;
 		if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) < (350)) {
-			if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (200)) {
+			if (((ecrobot_get_motor_rev(NXT_PORT_C)) - revn) > (150)) {
 				if ((ecrobot_get_light_sensor(NXT_PORT_S3)) > (color))
 					j = 1;
 			}
